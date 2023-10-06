@@ -1,12 +1,45 @@
-{% extends "layout/base.html" %}
+{% extends "layout/subLayout.html" %}
 {% block content %}
-<!-- driver_list is the variable passed in containing the list of drivers -->
-<!-- Add code to display a list of drivers -->
+{{ super() }}
+<div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
+    <h3 class='text-success-emphasis'>Driver List</h2>
+    
+    <table class="table table-hover table-bordered m-3">
+      <thead>
+        <tr>
+          <th colspan="5" class='text-center text-success-emphasis'>Driver Info</th>
+          <th colspan="2" class='text-center text-success-emphasis'>Car Info</th>
+        </tr>
+        <tr>
+          <th class='text-success-emphasis'>First Name</th>
+          <th class='text-success-emphasis'>Last Name</th>
+          <th class='text-success-emphasis'>Date of Birth</th>
+          <th class='text-success-emphasis'>Age</th>
+          <th class='text-success-emphasis'>Caregiver</th>
+          <th class='text-success-emphasis'>Car Model</th>
+          <th class='text-success-emphasis'>Driver Class</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider ">
+        {% for driver in driver_list %}
+          <tr class='{% if driver[4] is not none and 12 <= driver[4] <= 25  %}table-warning{% endif %}'>
+            <td class='text-success-emphasis'>{{ driver[1] }}</td>
+            <td class='text-success-emphasis'>{{ driver[2] }}</td>
+            <td class='text-success-emphasis'>{{ driver[3] }}</td>
+            <td class='text-success-emphasis'>{{ driver[4] }}</td>
+            <td class='text-success-emphasis'>{{ driver[5] }}</td>
 
-<h2>Driver List</h2>
+            <td class='text-success-emphasis'>{{ driver[8] }}</td>
+            <td class='text-success-emphasis'>{{ driver[9] }}</td>
 
-<p>For the Milestone submission, this page just needs to display this text successfully in your browser.</p>
-
-<p>Add the driver list here for your final submission.</p>
+            <td>
+              <a href="{{ url_for('driver', driver_id=driver[0]) }}">
+                View Details
+              </a>
+            </td>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
 
 {% endblock %}

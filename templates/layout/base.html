@@ -12,38 +12,40 @@
     </head>
 
     <body>
-      <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded">
-        <div class="container-fluid">
-          <a 
-              class="navbar-brand active text-success-emphasis"
-              aria-current="page" 
-              href="/">
-              Bankside Rakaia Motorkhana Mavens - Competition event
-          </a>
-          <div class="d-inline-flex justify-content-end">
-            <button type="button" class="btn btn-success d-flex me-2">
-              <a class='link-underline link-underline-opacity-0 link-light' href="/">DRIVER</a>
-            </button>
-            <button type="button" class="btn btn-warning d-flex me-2">
-              <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/">ADMIN</a>
-            </button>
+      <div class="d-flex flex-column vh-100">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded">
+          <div class="container-fluid">
+            <a 
+                class="navbar-brand active text-success-emphasis"
+                aria-current="page" 
+                href="/">
+                Bankside Rakaia Motorkhana Mavens - Competition event
+            </a>
+            <div class="d-inline-flex justify-content-end">
+              <button type="button" class="btn btn-success d-flex me-2">
+                <a class='link-underline link-underline-opacity-0 link-light' href="/">DRIVER</a>
+              </button>
+              <button type="button" class="btn btn-warning d-flex me-2">
+                <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/">ADMIN</a>
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
-
-      <section class="content my-5">
-        <header>
-          {% block header %}{% endblock %}
-        </header>
-        {% for message in get_flashed_messages() %}
-          <div class="flash">{{ message }}</div>
-        {% endfor %}
-        {% block content %}{% endblock %}
-      </section>
-
-      <footer class='d-flex justify-content-center px-5 my-3'>
-        &copy; Copyright 2023 by Mia Zhang
-      </footer>
+        </nav>
+  
+        <section class="content my-5 flex-grow-1">
+          <header>
+            {% block header %}{% endblock %}
+          </header>
+          {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+          {% endfor %}
+          {% block content %}{% endblock %}
+        </section>
+  
+        <footer class='d-flex justify-content-center px-5 my-3'>
+          &copy; Copyright 2023 by Mia Zhang
+        </footer>
+      </div>
       <!-- Bootstrap's JavaScript bundle including Popper -->
       <script 
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 

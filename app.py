@@ -49,7 +49,9 @@ def driver(driver_id):
 @app.route('/listdrivers', methods=['GET'])
 def listdrivers():
     connection = getCursor()
-    connection.execute('SELECT * FROM driver, car WHERE driver.car = car.car_num;')
+    connection.execute(
+        'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
+    )
     driverList = connection.fetchall()
     print(driverList)
     return render_template('driverlist.html', driver_list = driverList)    
