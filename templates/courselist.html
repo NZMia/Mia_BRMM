@@ -1,23 +1,22 @@
-{% extends "base.html" %}
+{% extends "layout/subLayout.html" %}
 {% block content %}
-
-<h2>Course List</h2>
-<h3>current competition courses</h3>
-
-<!-- code to display list of courses-->
-<table>
-    <tr>
-        <th>Course</th>
-        <th>Name</th>
-        <th>Map diagram</th>
-    </tr>
+{{ super() }}
+<div class="row px-5 my-3 d-flex justify-content-center">
+    <h3 class='text-success-emphasis'>Course List</h2>
+    <h4 class='text-body-secondary'>current competition courses</h3>
+    
+    <!-- code to display list of courses-->
     {% for course in course_list %}
-        <tr>
-            {% for field in course %}
-                <td>{{field}}</td>
-            {% endfor %}
-        </tr>
+    <div class="col-sm-4 my-5 mb-sm-0">
+        <div class="card shadow rounded-4 border border-0 h-100" >
+            <img src="../static/{{course[2]}}" class="card-img-top" alt="...">
+            <div class="card-body bg-body-tertiary">
+              <h5 class="card-title text-success-emphasis">Course Name: {{course[1]}}</h5>
+              <h6 class='card-title text-body-secondary'>Course ID: {{course[0]}}</h6>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-</table>
+</div>
 
 {% endblock %}

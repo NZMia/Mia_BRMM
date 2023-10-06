@@ -1,0 +1,14 @@
+{% extends "layout/base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <div class="d-flex justify-content-end px-5 my-2 ">
+    <a class="icon-link icon-link-hover link-underline link-underline-opacity-0 link-secondary" href="javascript:history.go(-1)">
+      &larr; Back 
+    </a>    
+  </div>
+{% endblock %}
