@@ -31,27 +31,48 @@ def home():
 @app.route('/listcourses', methods=['GET'])
 def listcourses():
     connection = getCursor()
-    connection.execute('SELECT * FROM course;')
+    connection.execute('SELECT * FROM course ORDER BY course.course_id;')
     courseList = connection.fetchall()
     return render_template('courselist.html', course_list = courseList)
 
 @app.route('/driver/<driver_id>', methods=['POST', 'GET'])
 def driver(driver_id):
     connection = getCursor()
-    connection.execute(
-        'SELECT * FROM driver, run, car, course WHERE driver.driver_id = run.dr_id AND run.crs_id = course.course_id AND driver.car = car.car_num AND driver.driver_id = %s;', 
-        (driver_id,)
-    )
-    driver = connection.fetchall()
-    print(driver)
-    return render_template('driver.html', driver = driver)
+
+    driver_info = """
+    SELECT d.driver_id, CONCAT(d.first_name, ' ', d.surname) as name,
+    c.model, c.drive_class
+    FROM driver AS d
+        INNER JOIN car as c ON d.car = c.car_num
+    WHERE d.driver_id = %s;
+    """
+
+    run_details = """
+    SELECT co.name as course_name,
+    r.run_num, r.seconds, r.cones, r.wd,
+    FORMAT(
+        r.seconds +
+        COALESCE(5 * r.cones, 0) +
+        COALESCE(10 * r.wd, 0),
+        2
+    ) as run_total
+    FROM run AS r
+        INNER JOIN course as co ON r.crs_id = co.course_id
+    WHERE r.dr_id = %s;
+    """
+    connection.execute(driver_info, (driver_id,))
+    driver_info = connection.fetchone()
+
+    connection.execute(run_details, (driver_id,))
+    run_details = connection.fetchall()
+
+    return render_template('driverDetails.html', driver = driver_info, runs = run_details)
 
 @app.route('/listdrivers', methods=['GET'])
 def listdrivers():
     connection = getCursor()
-    connection.execute(
-        'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
-    )
+    query = 'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
+    connection.execute(query)
     driverList = connection.fetchall()
     print(driverList)
     return render_template('driverlist.html', driver_list = driverList)    
