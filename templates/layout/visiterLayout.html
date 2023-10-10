@@ -1,0 +1,28 @@
+{% extends "layout/base.html" %}
+{% block title %}Home{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block navbar %}
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasi"  href="{{ url_for('listcourses') }}">Courses</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasi"  href="{{ url_for('listdrivers') }}">Driver</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasi"  href="{{ url_for('overallresults') }}">Results</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasis"  href="#">Bar Graph</a>
+    </li>
+  </ul>
+  <div class="d-inline-flex justify-content-end">
+    <button type="button" class="btn btn-warning d-flex me-2">
+      <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/admin">Admin</a>
+    </button>
+  </div>
+{% endblock %}
+{% block content %}
+{% endblock %}

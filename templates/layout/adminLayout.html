@@ -1,0 +1,28 @@
+{% extends "layout/base.html" %}
+{% block title %}Admin{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block navbar %}
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasis"  href="{{ url_for('juniorList') }}">Junior Driver List</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasis"  href='#'>Driver Search</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasis"  href="#">Edit Runs</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-success-emphasis"  href="#">Add Runs</a>
+    </li>
+  </ul>
+  <div class="d-inline-flex justify-content-end">
+    <button type="button" class="btn btn-success d-flex me-2">
+      <a class='link-underline link-underline-opacity-0 text-light' href="/">Driver</a>
+    </button>
+  </div>
+{% endblock %}
+{% block content %}
+{% endblock %}
