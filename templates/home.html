@@ -9,7 +9,7 @@
   {% with card_title='List of Courses',
     card_content='A Motorkhana has six courses, to view the details of courses, click the button below.',
     link_url='listcourses',
-    btn_class='btn-outline-success',
+    btn_class='btn-success',
     link_text='Courses' 
   %}
 
@@ -17,11 +17,12 @@
   {% endwith %}
 
   <!-- List of Driver Card -->
-  {% with card_title='List of Drivers',
-    card_content='To view the list of drivers, click the button below.',
-    link_url='listdrivers',
-    btn_class='btn-outline-success',
-    link_text='Drivers' 
+  {% with card_title='Driver Search',
+    card_content='Driver search works and accepts partial text
+    matches in search term.',
+    link_url='driversearch',
+    btn_class='btn-success',
+    link_text='Driver Search' 
   %}
 
     {% include 'component/card.html' %}
@@ -35,19 +36,30 @@
     card_content='A Motorkhana has six courses, and each driver has two runs (attempts) at each course, with the best
     of those two runs counting towards their overall result for the day',
     link_url='overallresults',
-    btn_class='btn-outline-success',
+    btn_class='btn-success',
     link_text='Results' 
   %}
 
     {% include 'component/card.html' %}
   {% endwith %}
+  <!-- <div class="align-items-stretch col-sm-4">
+    <div class="card shadow rounded  border border-0 h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title text-success-emphasis">Edit run</h5>
+        <p class="card-text py-3 flex-grow-1 text-body-secondary">Display a horizontal bar graph of the top 5 drivers overall.</p>
+        <div class="d-inline-flex justify-content-end w-100">
+          <a href="#" class="btn btn-outline-success">Edit run</a>
+        </div>
+      </div>
+    </div>
+  </div> -->
   <div class="align-items-stretch col-sm-4">
     <div class="card shadow rounded  border border-0 h-100">
       <div class="card-body d-flex flex-column">
-        <h5 class="card-title text-success-emphasis">Bar graph</h5>
+        <h5 class="card-title text-success-emphasis">Add Drivers</h5>
         <p class="card-text py-3 flex-grow-1 text-body-secondary">Display a horizontal bar graph of the top 5 drivers overall.</p>
         <div class="d-inline-flex justify-content-end w-100">
-          <a href="#" class="btn btn-outline-success">Graph</a>
+          <a href="#" class="btn btn-outline-success">Add Drivers</a>
         </div>
       </div>
     </div>

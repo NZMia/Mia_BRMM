@@ -99,42 +99,74 @@ def overallresults():
                     THEN CONCAT(d.first_name, ' ', d.surname, '(J)')
                     ELSE  CONCAT(d.first_name, ' ', d.surname)
                 END AS name,
+                d.age,
                 car.model, 
                 car.car_num,
                 c.course_id,
-                c.name as course_name,
-                r.seconds +
-                COALESCE(5 * r.cones, 0) +
-                COALESCE(10 * r.wd, 0) AS run_total,
-                ROW_NUMBER() OVER (PARTITION BY d.driver_id, c.course_id ORDER BY COALESCE(r.seconds, 99999)) AS row_num
+                c.name AS course_name,
+                r.seconds + COALESCE(5 * r.cones, 0) + COALESCE(10 * r.wd, 0) 
+                AS run_total,
+                ROW_NUMBER() OVER (
+                    PARTITION BY d.driver_id, c.course_id 
+                    ORDER BY COALESCE(r.seconds, 99999)
+                ) AS row_num
+
             FROM driver AS d
             JOIN run AS r ON d.driver_id = r.dr_id
             JOIN course AS c ON r.crs_id = c.course_id
             JOIN car AS car ON d.car = car.car_num
+        ),
+        RankedDataWithCourseTime AS (
+            SELECT 
+                driver_id,
+                name,
+                age,
+                model,
+                course_id,
+                run_total,
+                CASE
+                    WHEN COALESCE(run_total, 0) = 0 THEN 'dnf'
+                    ELSE FORMAT(run_total, 2)
+                END AS course_time
+            FROM RankedData AS t1
+            WHERE row_num = 1
         )
 
         SELECT 
             driver_id,
             name,
+            age,
             model,
             course_id,
+            course_time,
             CASE
-                WHEN COALESCE(run_total, 0) = 0 THEN 'dnf'
-                ELSE FORMAT(run_total, 2)
-            END AS course_time
-        FROM RankedData
-        WHERE row_num = 1
-        ORDER BY driver_id, course_id;
+                WHEN 'dnf' IN (
+                    SELECT course_time 
+                    FROM RankedDataWithCourseTime AS rdc 
+                    WHERE rdc.driver_id = rdc1.driver_id
+                ) THEN 'NQ'
+                ELSE FORMAT(
+                    SUM(
+                        CAST(run_total AS DECIMAL(10, 2))
+                    ) OVER (PARTITION BY rdc1.driver_id)
+                    ,2)
+            END AS overall_results
+        FROM RankedDataWithCourseTime AS rdc1
+        ORDER BY 
+            CASE 
+                WHEN overall_results = 'NQ' THEN 1
+                ELSE 0
+            END,
+            overall_results,
+            course_id;
     """
     connection.execute(query)
     original_data = connection.fetchall()
-    output_data = {}
     course_times_dic = {}
-    output_data_overall = {}
-    overall_results_dic ={}
+
     for item in original_data:
-        driver_id, name, model, course_id, course_time = item
-        key = (driver_id, name, model)
+        driver_id, name, age, model, course_id, course_time, overall_results = item
+        key = (driver_id, name, age, model, overall_results)
         value = [
             {course_id: course_time}
         ]
@@ -143,36 +175,10 @@ def overallresults():
         else:
             if course_id not in course_times_dic[key]:
                 course_times_dic[key].append({course_id: course_time})
-
-    for item in original_data:
-        key = item[:3]
-        value = float(item[-1]) if item[-1] != 'dnf' else 'NQ'
-
-        if key not in overall_results_dic.keys():
-            overall_results_dic[key] = value
-        else:
-            if value != 'NQ':
-                overall_results_dic[key] += value
-
-                round(overall_results_dic[key], 2)
-            else:
-                overall_results_dic[key] = 'NQ'
-                
+    
     print (course_times_dic)
-    print (overall_results_dic)
-    # output_list = [(
-    #     id, name, model, data_dict, 
-    #     round(sum(float(v) for v in data_dict.values()), 2)) if data_dict.get(1) is not 'dnf' else 'NQ'
-    #     for id, name, model, data_dict in output_data.values()]
 
-    # for id, name, model, data_dict in output_data.values():
-    #     overall = 0
-    #     if data_dict.get(1) is 'dnf':
-    #         overall = 'NQ'
-    #     else:
-            # overall = round(sum(float(v) for v in data_dict.values()), 2)
-    # print(output_list)
-    return render_template('routers/visiter/overallResults.html', rank_list = original_data)
+    return render_template('routers/visiter/overallResults.html', rank_list = course_times_dic)
 
 @app.route('/graph')
 def showgraph():
@@ -204,3 +210,78 @@ def juniorList():
     print(junior_list)
     return render_template('routers/admin/juniorList.html', junior_list = junior_list) 
 
+@app.route('/driversearch', methods=['GET', 'POST'])
+def driversearch():
+    driver_info = []
+    show_results = False
+
+    if request.method == 'POST':
+        show_results = True 
+        connection = getCursor()
+        partial_text = request.form['partial_text']
+        params = {'partial_text': '%' + partial_text + '%'}
+
+        query = """
+            SELECT *
+            FROM driver as d
+                WHERE d.first_name LIKE %(partial_text)s
+                OR surname LIKE %(partial_text)s
+            ;
+        """
+        connection.execute(query,  params)
+        driver_info = connection.fetchall()
+    
+    return render_template('routers/admin/driverSearch.html', driver_info = driver_info, show_results = show_results)
+
+@app.route('/runsearch', methods=['GET', 'POST'])
+def runsearch():
+    run_info = []
+    show_results = False
+    connection = getCursor()
+    driver_info = """
+        SELECT d.driver_id, concat(d.first_name, ' ', d.surname) as name
+        FROM driver as d;
+    """
+    course_info = """
+        SELECT c.course_id, c.name
+        FROM course as c;
+    """
+    connection.execute(driver_info)
+    driver_run_info = connection.fetchall()
+
+    connection.execute(course_info)
+    course_details = connection.fetchall()
+
+    driver_id = request.args.get('driver_id')
+    course_id = request.args.get('course_id')
+
+    if driver_id is not None:
+        driver_run_query = """
+            SELECT  d.driver_id, concat(d.first_name, ' ', d.surname) as name, r.crs_id, r.run_num, r.seconds, r.cones, r.wd
+            FROM driver as d
+                JOIN run as r on r.dr_id = d.driver_id
+            WHERE d.driver_id = %s;
+        """
+
+        connection.execute(driver_run_query, (driver_id,))
+        run_info = connection.fetchall()
+        show_results = True
+  
+    if course_id is not None:
+        course_run_query = """ 
+            SELECT c.course_id, c.name, r.dr_id, r.run_num, r.seconds, r.cones, r.wd
+            FROM course as c
+                JOIN run as r on r.crs_id = c.course_id
+            WHERE c.course_id = %s;
+        """
+        connection.execute(course_run_query, (course_id,))
+        run_info = connection.fetchall()
+        show_results = True
+    print(run_info)
+    return render_template(
+        'routers/admin/editRun.html',
+        driver_run_info = driver_run_info,
+        course_details = course_details,
+        run_info = run_info, 
+        show_results = show_results
+    )
