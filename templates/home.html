@@ -39,30 +39,19 @@
     btn_class='btn-success',
     link_text='Results' 
   %}
+    {% include 'component/card.html' %}
+  {% endwith %}
+
+  <!-- Graph -->
+  {% with card_title='Graph',
+    card_content='Display a horizontal bar graph of the top 5 drivers overall',
+    link_url='graph',
+    btn_class='btn-success',
+    link_text='Graph' 
+  %}
 
     {% include 'component/card.html' %}
   {% endwith %}
-  <!-- <div class="align-items-stretch col-sm-4">
-    <div class="card shadow rounded  border border-0 h-100">
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title text-success-emphasis">Edit run</h5>
-        <p class="card-text py-3 flex-grow-1 text-body-secondary">Display a horizontal bar graph of the top 5 drivers overall.</p>
-        <div class="d-inline-flex justify-content-end w-100">
-          <a href="#" class="btn btn-outline-success">Edit run</a>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <div class="align-items-stretch col-sm-4">
-    <div class="card shadow rounded  border border-0 h-100">
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title text-success-emphasis">Add Drivers</h5>
-        <p class="card-text py-3 flex-grow-1 text-body-secondary">Display a horizontal bar graph of the top 5 drivers overall.</p>
-        <div class="d-inline-flex justify-content-end w-100">
-          <a href="#" class="btn btn-outline-success">Add Drivers</a>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </div>
 {% endblock %}
