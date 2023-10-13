@@ -24,71 +24,7 @@ def getCursor():
     dbconn = connection.cursor()
     return dbconn
 
-@app.route('/', methods=['GET'])
-def home():
-    return render_template('home.html')
-
-@app.route('/listcourses', methods=['GET'])
-def listcourses():
-    connection = getCursor()
-    connection.execute('SELECT * FROM course ORDER BY course.course_id;')
-    course_list = connection.fetchall()
-    return render_template('routers/visiter/courseList.html', course_list = course_list)
-
-@app.route('/driverdetails/', methods=['GET'])
-def driverdetails():
-    driver_id = request.args.get('driver_id')
-    connection = getCursor()
-
-    driver_info = """
-    SELECT d.driver_id, CONCAT(d.first_name, ' ', d.surname) as name,
-    c.model, c.drive_class
-    FROM driver AS d
-        INNER JOIN car as c ON d.car = c.car_num
-    WHERE d.driver_id = %s;
-    """
-
-    run_details = """
-    SELECT co.name as course_name,
-    r.run_num, r.seconds, r.cones, r.wd,
-    FORMAT(
-        r.seconds +
-        COALESCE(5 * r.cones, 0) +
-        COALESCE(10 * r.wd, 0),
-        2
-    ) as run_total
-    FROM run AS r
-        INNER JOIN course as co ON r.crs_id = co.course_id
-    WHERE r.dr_id = %s;
-    """
-    connection.execute(driver_info, (driver_id,))
-    driver_info = connection.fetchone()
-
-    connection.execute(run_details, (driver_id,))
-    run_details = connection.fetchall()
-
-    return render_template('routers/visiter/driverDetails.html', driver = driver_info, runs = run_details)
-
-@app.route('/listdrivers', methods=['GET'])
-def listdrivers():
-    connection = getCursor()
-    query = 'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
-    connection.execute(query)
-    driverList = connection.fetchall()
-    print(driverList)
-    return render_template(
-        'routers/visiter/driverList.html',
-        driver_list = driverList
-    )  
-  
-def custom_sort_key(item):
-    overall_total = item[1]['overall_total']
-    if overall_total == 'NQ':
-        return float('inf')  # Assign a larger value to 'NQ'
-    return float(overall_total)
-
-@app.route('/overallresults', methods=['GET'])
-def overallresults():
+def getOverallResults():
     connection = getCursor()
     query = """
         WITH RankedData AS (
@@ -161,7 +97,69 @@ def overallresults():
             course_id;
     """
     connection.execute(query)
-    original_data = connection.fetchall()
+    return connection.fetchall()
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('home.html')
+
+@app.route('/listcourses', methods=['GET'])
+def listcourses():
+    connection = getCursor()
+    connection.execute('SELECT * FROM course ORDER BY course.course_id;')
+    course_list = connection.fetchall()
+    return render_template('routers/visiter/courseList.html', course_list = course_list)
+
+@app.route('/driverdetails/', methods=['GET'])
+def driverdetails():
+    driver_id = request.args.get('driver_id')
+    connection = getCursor()
+
+    driver_info = """
+    SELECT d.driver_id, CONCAT(d.first_name, ' ', d.surname) as name,
+    c.model, c.drive_class
+    FROM driver AS d
+        INNER JOIN car as c ON d.car = c.car_num
+    WHERE d.driver_id = %s;
+    """
+
+    run_details = """
+    SELECT co.name as course_name,
+    r.run_num, r.seconds, r.cones, r.wd,
+    FORMAT(
+        r.seconds +
+        COALESCE(5 * r.cones, 0) +
+        COALESCE(10 * r.wd, 0),
+        2
+    ) as run_total
+    FROM run AS r
+        INNER JOIN course as co ON r.crs_id = co.course_id
+    WHERE r.dr_id = %s;
+    """
+    connection.execute(driver_info, (driver_id,))
+    driver_info = connection.fetchone()
+
+    connection.execute(run_details, (driver_id,))
+    run_details = connection.fetchall()
+
+    return render_template('routers/visiter/driverDetails.html', driver = driver_info, runs = run_details)
+
+@app.route('/listdrivers', methods=['GET'])
+def listdrivers():
+    connection = getCursor()
+    query = 'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
+    connection.execute(query)
+    driverList = connection.fetchall()
+    print(driverList)
+    return render_template(
+        'routers/visiter/driverList.html',
+        driver_list = driverList
+    )  
+
+@app.route('/overallresults', methods=['GET'])
+def overallresults():
+
+    original_data = getOverallResults()
     course_times_dic = {}
 
     for item in original_data:
@@ -181,13 +179,33 @@ def overallresults():
     return render_template('routers/visiter/overallResults.html', rank_list = course_times_dic)
 
 @app.route('/graph')
-def showgraph():
-    connection = getCursor()
+def graph():
+    # original_data
     # Insert code to get top 5 drivers overall, ordered by their final results.
     # Use that to construct 2 lists: bestDriverList containing the names, resultsList containing the final result values
     # Names should include their ID and a trailing space, eg '133 Oliver Ngatai '
+# name_list = bestDriverList, value_list = resultsList  
+    original_data = getOverallResults()
+    bestDriverList = []
+    resultsList = []
+    unique_output = set()
+    
+    for item in original_data:
+        if item[0] not in unique_output:
+            name = str(item[0]) + ' ' + item[1]
+            bestDriverList.append(name)
+            resultsList.append(item[-1])
+            unique_output.add(item[0])
+        if len(unique_output) == 5:
+            break
 
+    print(bestDriverList)
+    print(resultsList)
     return render_template('routers/visiter/top5graph.html', name_list = bestDriverList, value_list = resultsList)
+
+
+
+
 
 @app.route('/admin', methods=['GET'])
 def admin():

@@ -13,12 +13,11 @@
 
     <body>
       <div class="d-flex flex-column vh-100">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded fixed-top nav-pills">
           <div class="container-fluid">
             <a class="navbar-brand active text-success-emphasis"
-                aria-current="page" 
                 href="/">
-                Bankside Rakaia Motorkhana Maven
+                BRMM
             </a> 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -27,30 +26,17 @@
               {% block navbar %}{% endblock %}
               <div class="d-inline-flex justify-content-end">
                 <button type="button" class="btn btn-success d-flex me-2">
-                  <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver Page (For Visiter)</a>
+                  <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver</a>
                 </button>
                 <button type="button" class="btn btn-warning d-flex me-2">
                   <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/admin">Admin</a>
                 </button>
+              </div>
             </div>
-            <!-- <a 
-                class="navbar-brand active text-success-emphasis"
-                aria-current="page" 
-                href="/">
-                Bankside Rakaia Motorkhana Mavens - Competition event
-            </a>
-            <div class="d-inline-flex justify-content-end">
-              <button type="button" class="btn btn-success d-flex me-2">
-                <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver Page (For Visiter)</a>
-              </button>
-              <button type="button" class="btn btn-warning d-flex me-2">
-                <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/">Admin</a>
-              </button>
-            </div> -->
           </div>
         </nav>
   
-        <section class="content my-5 flex-grow-1">
+        <section class="content my-5 p-5 flex-grow-1">
           <header>
           {% block header %}{% endblock %}
           </header>
