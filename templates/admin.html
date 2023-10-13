@@ -1,0 +1,67 @@
+{% extends "layout/adminLayout.html" %}
+{% block content %}
+
+<!-- driver_list is the variable passed in containing the list of drivers -->
+<!-- Add code to display a list of drivers -->
+
+<div class="row px-5 my-3 d-flex justify-content-center">
+  <!-- List Courses Card -->
+  {% with card_title='Junior driver List',
+    card_content='Juniors are aged 12-25, Junior drivers who are 16 or
+    younger must also have a designated caregiver (the driver ID of another driver who isn’t a junior). ',
+    link_url='juniorList',
+    btn_class='btn-warning',
+    link_text='Junior' 
+  %}
+
+    {% include 'component/card.html' %}
+  {% endwith %}
+
+  <!-- List of Driver Card -->
+  {% with card_title='Search for Drivers',
+    card_content='Searching driver by typing partial first name or surname.',
+    link_url='driversearch',
+    btn_class='btn-warning',
+    link_text='Drivers' 
+  %}
+
+    {% include 'component/card.html' %}
+  {% endwith %}
+</div>
+
+<div class="row px-5 my-2 d-flex justify-content-center">
+
+  <!-- List of Overall Results Card -->
+  {% with card_title='Edit Run',
+    card_content='Edit run content',
+    link_url='runsearch',
+    btn_class='btn-warning',
+    link_text='Edit Run' 
+  %}
+
+    {% include 'component/card.html' %}
+  {% endwith %}
+  <!-- <div class="align-items-stretch col-sm-4">
+    <div class="card shadow rounded  border border-0 h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title text-success-emphasis">ADMIN</h5>
+        <p class="card-text py-3 flex-grow-1 text-body-secondary">Display a horizontal bar graph of the top 5 drivers overall.</p>
+        <div class="d-inline-flex justify-content-end w-100">
+          <a href="#" class="btn btn-outline-success">ADMIN</a>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="align-items-stretch col-sm-4">
+    <div class="card shadow rounded  border border-0 h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title text-success-emphasis">Bar graph</h5>
+        <p class="card-text py-3 flex-grow-1 text-body-secondary">Display a horizontal bar graph of the top 5 drivers overall.</p>
+        <div class="d-inline-flex justify-content-end w-100">
+          <a href="#" class="btn btn-outline-success">Graph</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

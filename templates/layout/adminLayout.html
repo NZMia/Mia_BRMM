@@ -1,0 +1,36 @@
+{% extends "layout/base.html" %}
+{% block title %}Admin{% endblock %}
+{% block header %}
+  <h3 class='m-5'>
+    Bankside Rakaia Motorkhana Maven_Admin
+  </h3>
+{% endblock %}
+{% block navbar %}
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 grid gap-3">
+    <li class="nav-item">
+      <a class="btn btn-outline-warning text-warning-emphasis"  
+        href="{{ url_for('juniorList') }}">
+        Junior Driver List
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-warning text-warning-emphasis" 
+        href="{{ url_for('driversearch') }}">
+        Driver Search
+      </a>
+    </li>
+    <li class="nav-item ">
+      <a class="btn btn-outline-warning text-warning-emphasis"
+        href="{{ url_for('runsearch') }}">
+        Edit Runs
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-warning text-warning-emphasis"  href="#">
+        Add Runs
+      </a>
+    </li>
+  </ul>
+{% endblock %}
+{% block content %}
+{% endblock %}

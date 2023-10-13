@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}{% endblock %}</title>
+        <!-- Bootstrap CSS link -->
+        <link 
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+          rel="stylesheet" 
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+          crossorigin="anonymous" />
+    </head>
+
+    <body>
+      <div class="d-flex flex-column vh-100">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded fixed-top nav-pills">
+          <div class="container-fluid">
+            <a class="navbar-brand active text-success-emphasis"
+                href="/">
+                BRMM
+            </a> 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              {% block navbar %}{% endblock %}
+              <div class="d-inline-flex justify-content-end">
+                <button type="button" class="btn btn-success d-flex me-2">
+                  <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver</a>
+                </button>
+                <button type="button" class="btn btn-warning d-flex me-2">
+                  <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/admin">Admin</a>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+  
+        <section class="content my-5 p-5 flex-grow-1">
+          <header>
+          {% block header %}{% endblock %}
+          </header>
+          {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+          {% endfor %}
+          {% block content %}{% endblock %}
+        </section>
+  
+        <footer class='d-flex justify-content-center px-5 my-3'>
+          &copy; Copyright 2023 by Mia Zhang
+        </footer>
+      </div>
+      <!-- Bootstrap's JavaScript bundle including Popper -->
+      <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+        crossorigin="anonymous">
+      </script>
+    </body>
+</html>

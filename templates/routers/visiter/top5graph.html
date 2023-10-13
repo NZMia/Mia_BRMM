@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html>
+    <!-- access Plotly content delivery network (CDN) charting library -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+        crossorigin="anonymous" />
+<body>
+    <div class="d-flex flex-column vh-100">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded">
+          <div class="container-fluid">
+            <a class="navbar-brand active text-success-emphasis"
+                aria-current="page" 
+                href="/">
+                Bankside Rakaia Motorkhana Maven
+            </a> 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-success-emphasi"  href="{{ url_for('listcourses') }}">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-success-emphasi"  href="{{ url_for('listdrivers') }}">Driver</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-success-emphasi"  href="{{ url_for('overallresults') }}">Results</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-success-emphasis"  href="#">Bar Graph</a>
+                    </li>
+                </ul>
+              <div class="d-inline-flex justify-content-end">
+                <button type="button" class="btn btn-success d-flex me-2">
+                  <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver Page (For Visiter)</a>
+                </button>
+                <button type="button" class="btn btn-warning d-flex me-2">
+                  <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/admin">Admin</a>
+                </button>
+            </div>
+          </div>
+        </nav>
+  
+        <section class="content my-5 flex-grow-1">
+            <div class="row px-5 my-3 d-flex justify-content-center">
+                <h3 class='text-success-emphasis'>Top Five Driver</h3>
+                <div 
+                    id="myHBarPlot" 
+                    class="col-sm-12 col-md-8 col-lg-6"
+                    data-nameList='{{ name_list|tojson }}'
+                    data-valueList='{{ value_list|tojson }}'>
+                </div>
+            </div>
+        </section>
+  
+        <footer class='d-flex justify-content-center px-5 my-3'>
+          &copy; Copyright 2023 by Mia Zhang
+        </footer>
+      </div>
+
+    <script>
+        // Note SPACE after each fruit name so gap before horizontal bars
+        var nameList =  document.querySelector("#myHBarPlot").getAttribute("data-nameList");
+        var valueList = document.querySelector("#myHBarPlot").getAttribute("data-valueList");
+        console.log(nameList)
+        console.log(valueList)
+        // REPLACE constants above with passed in variables.
+        // Use the '|safe' Jinja filter to mark them as safe (prevents your data being html-escaped). eg,
+
+        // Define graph data
+        const data = [{ 
+            x: JSON.parse(valueList) , 
+            y: JSON.parse(nameList), 
+            type:"bar", 
+            orientation:"h", 
+            marker: {color:"darkgreen"}
+         }];
+
+        // Define graph layout. Excluded a y-axis title as fruit names are self-explanatory.
+        const layout = {  
+            xaxis: {
+                range: [-5, 300], 
+                title: "Time spend", 
+            }, 
+            'yaxis': {
+                tickangle: -50,
+            },
+            title: "Top five",
+            legend: {
+                bgcolor: "lightblue",
+            },
+        };
+
+        // Display using Plotly
+        Plotly.newPlot("myHBarPlot", data, layout);
+
+    </script>
+
+</body>
+</html>

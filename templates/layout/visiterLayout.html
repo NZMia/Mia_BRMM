@@ -1,0 +1,37 @@
+{% extends "layout/base.html" %}
+{% block title %}Home{% endblock %}
+{% block header %}
+  <h3 class='m-5'>
+    Bankside Rakaia Motorkhana Maven: Driver
+  </h3>
+{% endblock %}
+{% block navbar %}
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav-pills grid gap-3">
+    <li class="nav-item">
+      <a class="btn btn-outline-success"  
+        href="{{ url_for('listcourses') }}">
+        Courses
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-success"  
+        href="{{ url_for('listdrivers') }}">
+        Driver
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-success"  
+        href="{{ url_for('overallresults') }}">
+        Results
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-success"
+        href="{{ url_for('graph')}}">
+        Bar Graph
+      </a>
+    </li>
+  </ul>
+{% endblock %}
+{% block content %}
+{% endblock %}

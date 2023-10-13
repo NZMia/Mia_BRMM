@@ -1,0 +1,32 @@
+{% extends "layout/adminLayout.html" %}
+{% block title %}Junior driver List{% endblock %}
+{% block content %}
+{{ super() }}
+<div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
+  <h3 class='text-success-emphasis'>Junior Driver List</h3>
+  <h4 class='text-body-secondary'>current competition courses</h4>
+  
+  <table class="table table-hover table-bordered m-3">
+    <thead>
+      <tr>
+        <th class='text-success-emphasis'>Driver_id</th>
+        <th class='text-success-emphasis'>First Name</th>
+        <th class='text-success-emphasis'>Surname Name</th>
+        <th class='text-success-emphasis'>Date of Birth</th>
+        <th class='text-success-emphasis'>Age</th>
+        <th class='text-success-emphasis'>Caregiver</th>
+        <th class='text-success-emphasis'>Car Model</th>
+        <th class='text-success-emphasis'>Caregiver Name</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider ">
+      {% for driver in junior_list %}
+        <tr class='{% if driver[4] is not none and 12 <= driver[4] <= 25  %}table-warning{% endif %}'>
+          {% for template in driver %}
+            <td class='text-success-emphasis'>{{ template }}</td>
+          {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "layout/subLayout.html" %}
+{% block content %}
+{{ super() }}
+<div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
+    <h3 class='text-success-emphasis'>Driver List</h2>
+    
+    <table class="table table-hover table-bordered m-3">
+      <thead>
+        <tr>
+          <th colspan="5" class='text-center text-success-emphasis'>Driver Info</th>
+          <th colspan="2" class='text-center text-success-emphasis'>Car Info</th>
+        </tr>
+        <tr>
+          <th class='text-success-emphasis'>Surname Name</th>
+          <th class='text-success-emphasis'>First Name</th>
+          <th class='text-success-emphasis'>Date of Birth</th>
+          <th class='text-success-emphasis'>Age</th>
+          <th class='text-success-emphasis'>Caregiver</th>
+          <th class='text-success-emphasis'>Car Model</th>
+          <th class='text-success-emphasis'>Driver Class</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider ">
+        {% for driver in driver_list %}
+          <tr class='{% if driver[4] is not none and 12 <= driver[4] <= 25  %}table-warning{% endif %}'>
+            
+            <td class='text-success-emphasis'>
+              <a href="{{ url_for('driverdetails', driver_id=driver[0]) }}">
+                {{ driver[2] }}
+              </a>
+            </td>
+            <td class='text-success-emphasis'>
+              <a href="{{ url_for('driverdetails', driver_id=driver[0]) }}">
+                {{ driver[1] }}
+              </a>
+            </td>
+
+            <td class='text-success-emphasis'>{{ driver[3] }}</td>
+            <td class='text-success-emphasis'>{{ driver[4] }}</td>
+            <td class='text-success-emphasis'>{{ driver[5] }}</td>
+
+            <td class='text-success-emphasis'>{{ driver[8] }}</td>
+            <td class='text-success-emphasis'>{{ driver[9] }}</td>
+
+            <!-- <td>
+              <a href="{{ url_for('driverdetails', driver_id=driver[0]) }}">
+                View Details
+              </a>
+            </td> -->
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+{% endblock %}
