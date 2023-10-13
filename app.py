@@ -8,7 +8,7 @@ from datetime import datetime
 
 import mysql.connector
 from mysql.connector import FieldType
-import connect_local
+import connect
 
 app = Flask(__name__)
 
@@ -18,9 +18,9 @@ connection = None
 def getCursor():
     global dbconn
     global connection
-    connection = mysql.connector.connect(user=connect_local.dbuser, \
-    password=connect_local.dbpass, host=connect_local.dbhost, \
-    database=connect_local.dbname, autocommit=True)
+    connection = mysql.connector.connect(user=connect.dbuser, \
+    password=connect.dbpass, host=connect.dbhost, \
+    database=connect.dbname, autocommit=True)
     dbconn = connection.cursor()
     return dbconn
 
@@ -189,7 +189,7 @@ def graph():
     bestDriverList = []
     resultsList = []
     unique_output = set()
-    
+
     for item in original_data:
         if item[0] not in unique_output:
             name = str(item[0]) + ' ' + item[1]
@@ -202,10 +202,6 @@ def graph():
     print(bestDriverList)
     print(resultsList)
     return render_template('routers/visiter/top5graph.html', name_list = bestDriverList, value_list = resultsList)
-
-
-
-
 
 @app.route('/admin', methods=['GET'])
 def admin():
