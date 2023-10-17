@@ -9,19 +9,25 @@
   <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav-pills grid gap-3">
     <li class="nav-item">
       <a class="btn btn-outline-success"  
-        href="{{ url_for('listcourses') }}">
+        href="{{ url_for('courses') }}">
         Courses
       </a>
     </li>
     <li class="nav-item">
       <a class="btn btn-outline-success"  
-        href="{{ url_for('listdrivers') }}">
-        Driver
+        href="{{ url_for('drivers', is_run_details='dropdown') }}">
+        Run Details
       </a>
     </li>
     <li class="nav-item">
       <a class="btn btn-outline-success"  
-        href="{{ url_for('overallresults') }}">
+        href="{{ url_for('drivers') }}">
+        Drivers
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-success"  
+        href="{{ url_for('results') }}">
         Results
       </a>
     </li>

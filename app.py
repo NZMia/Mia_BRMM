@@ -99,21 +99,53 @@ def getOverallResults():
     connection.execute(query)
     return connection.fetchall()
 
+def getDrivers():
+    connection = getCursor()
+    query = 'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
+    connection.execute(query)
+    driverList = connection.fetchall()
+    return driverList
+
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
 
-@app.route('/listcourses', methods=['GET'])
-def listcourses():
-    connection = getCursor()
-    connection.execute('SELECT * FROM course ORDER BY course.course_id;')
-    course_list = connection.fetchall()
-    return render_template('routers/visiter/courseList.html', course_list = course_list)
+# ==================== Driver ====================
 
-@app.route('/driverdetails/', methods=['GET'])
-def driverdetails():
-    driver_id = request.args.get('driver_id')
+# Route: list all courses
+@app.route('/courses', methods=['GET'])
+def courses():
     connection = getCursor()
+    query= 'SELECT * FROM course ORDER BY course.course_id;'
+    connection.execute(query)
+    course_list = connection.fetchall()
+    return render_template('routes/visiter/courseList.html', course_list = course_list)
+
+# Route: list all driver
+@app.route('/drivers', methods=['GET'])
+def drivers():
+    is_run_details = request.args.get('is_run_details')
+    driver_list = getDrivers()
+    if is_run_details:
+        return render_template(
+            'routes/visiter/driversDropdown.html',
+            driver_list = driver_list,
+        )
+    else:
+        return render_template(
+            'routes/visiter/driverList.html',
+            driver_list = driver_list
+        )  
+
+# Route: driver details
+@app.route('/driver', methods=['GET', 'POST'])
+def driver():
+    connection = getCursor()
+    driver_id = ''
+    if request.method == 'POST':
+        driver_id = request.form['selected_driver']
+    else:
+        driver_id = request.args.get('driver_id')
 
     driver_info = """
     SELECT d.driver_id, CONCAT(d.first_name, ' ', d.surname) as name,
@@ -142,22 +174,11 @@ def driverdetails():
     connection.execute(run_details, (driver_id,))
     run_details = connection.fetchall()
 
-    return render_template('routers/visiter/driverDetails.html', driver = driver_info, runs = run_details)
+    return render_template('routes/visiter/driverDetails.html', driver = driver_info, runs = run_details)
 
-@app.route('/listdrivers', methods=['GET'])
-def listdrivers():
-    connection = getCursor()
-    query = 'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
-    connection.execute(query)
-    driverList = connection.fetchall()
-    print(driverList)
-    return render_template(
-        'routers/visiter/driverList.html',
-        driver_list = driverList
-    )  
-
-@app.route('/overallresults', methods=['GET'])
-def overallresults():
+# Route: Overall Results
+@app.route('/results', methods=['GET'])
+def results():
 
     original_data = getOverallResults()
     course_times_dic = {}
@@ -173,18 +194,12 @@ def overallresults():
         else:
             if course_id not in course_times_dic[key]:
                 course_times_dic[key].append({course_id: course_time})
-    
-    print (course_times_dic)
 
-    return render_template('routers/visiter/overallResults.html', rank_list = course_times_dic)
+    return render_template('routes/visiter/overallResults.html', rank_list = course_times_dic)
 
+# Route: Top 5 graph
 @app.route('/graph')
 def graph():
-    # original_data
-    # Insert code to get top 5 drivers overall, ordered by their final results.
-    # Use that to construct 2 lists: bestDriverList containing the names, resultsList containing the final result values
-    # Names should include their ID and a trailing space, eg '133 Oliver Ngatai '
-# name_list = bestDriverList, value_list = resultsList  
     original_data = getOverallResults()
     bestDriverList = []
     resultsList = []
@@ -198,11 +213,9 @@ def graph():
             unique_output.add(item[0])
         if len(unique_output) == 5:
             break
+    return render_template('routes/visiter/top5graph.html', name_list = bestDriverList, value_list = resultsList)
 
-    print(bestDriverList)
-    print(resultsList)
-    return render_template('routers/visiter/top5graph.html', name_list = bestDriverList, value_list = resultsList)
-
+# ==================== Admin ====================
 @app.route('/admin', methods=['GET'])
 def admin():
     return render_template('admin.html')
@@ -221,8 +234,7 @@ def juniorList():
     connection.execute(query)
 
     junior_list = connection.fetchall()
-    print(junior_list)
-    return render_template('routers/admin/juniorList.html', junior_list = junior_list) 
+    return render_template('routes/admin/juniorList.html', junior_list = junior_list) 
 
 @app.route('/driversearch', methods=['GET', 'POST'])
 def driversearch():
@@ -245,7 +257,7 @@ def driversearch():
         connection.execute(query,  params)
         driver_info = connection.fetchall()
     
-    return render_template('routers/admin/driverSearch.html', driver_info = driver_info, show_results = show_results)
+    return render_template('routes/admin/driverSearch.html', driver_info = driver_info, show_results = show_results)
 
 @app.route('/runsearch', methods=['GET', 'POST'])
 def runsearch():
@@ -293,7 +305,7 @@ def runsearch():
         show_results = True
     print(run_info)
     return render_template(
-        'routers/admin/editRun.html',
+        'routes/admin/editRun.html',
         driver_run_info = driver_run_info,
         course_details = course_details,
         run_info = run_info, 

@@ -1,4 +1,5 @@
-{% extends "layout/subLayout.html" %}
+{% extends "layout/driverLayout.html" %}
+{% block title %}Overall Results{% endblock %}
 {% block content %}
 {{ super() }}
 <div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
@@ -70,5 +71,19 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <h6 class='text-danger text-end'>
+    ‘NQ’ (Not Qualified).
+    <span>
+      A driver with ‘dnf’ for any course is not qualified to win overall.
+    </span>
+  </h6>
+
+  <h6 class='text-danger text-end'>
+    ‘dnf’ (did not finish)
+    <span>A driver with ‘dnf’ for misses
+      both runs </span>
+  </h6>
+  
 </div>
 {% endblock %}
