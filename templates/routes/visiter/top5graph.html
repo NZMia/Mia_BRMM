@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
     <!-- access Plotly content delivery network (CDN) charting library -->
+    <title>Top 5 Graph</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link 
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
@@ -10,52 +11,73 @@
         crossorigin="anonymous" />
 <body>
     <div class="d-flex flex-column vh-100">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary px-5 py-3 shadow rounded fixed-top">
           <div class="container-fluid">
             <a class="navbar-brand active text-success-emphasis"
                 aria-current="page" 
                 href="/">
-                Bankside Rakaia Motorkhana Maven
+                BRMM
             </a> 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link text-success-emphasi"  href="{{ url_for('listcourses') }}">Courses</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-success-emphasi"  href="{{ url_for('listdrivers') }}">Driver</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-success-emphasi"  href="{{ url_for('overallresults') }}">Results</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-success-emphasis"  href="#">Bar Graph</a>
-                    </li>
-                </ul>
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0 nav-pills grid gap-3">
+                <li class="nav-item">
+                  <a class="btn btn-outline-success"  
+                    href="{{ url_for('courses') }}">
+                    Courses
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-outline-success"  
+                    href="{{ url_for('drivers', is_run_details='dropdown') }}">
+                    Run Details
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-outline-success"  
+                    href="{{ url_for('drivers') }}">
+                    Drivers
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-outline-success"  
+                    href="{{ url_for('results') }}">
+                    Results
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-outline-success"
+                    href="{{ url_for('graph')}}">
+                    Bar Graph
+                  </a>
+                </li>
+              </ul>
               <div class="d-inline-flex justify-content-end">
                 <button type="button" class="btn btn-success d-flex me-2">
-                  <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver Page (For Visiter)</a>
+                  <a class='link-underline link-underline-opacity-0 link-light' href="/">Driver</a>
                 </button>
                 <button type="button" class="btn btn-warning d-flex me-2">
                   <a class='link-underline link-underline-opacity-0 text-success-emphasis' href="/admin">Admin</a>
                 </button>
             </div>
           </div>
-        </nav>
-  
+        </nav>  
         <section class="content my-5 flex-grow-1">
-            <div class="row px-5 my-3 d-flex justify-content-center">
-                <h3 class='text-success-emphasis'>Top Five Driver</h3>
-                <div 
-                    id="myHBarPlot" 
-                    class="col-sm-12 col-md-8 col-lg-6"
-                    data-nameList='{{ name_list|tojson }}'
-                    data-valueList='{{ value_list|tojson }}'>
-                </div>
+          <header>
+            <h3 class='m-5'>
+              Bankside Rakaia Motorkhana Maven: Driver
+            </h3>
+          </header>
+          <div class="row px-5 my-3 d-flex justify-content-center">
+            <div 
+              id="myHBarPlot" 
+              class="col-sm-12 col-md-8 col-lg-6"
+              data-nameList='{{ name_list|tojson }}'
+              data-valueList='{{ value_list|tojson }}'>
             </div>
+          </div>
         </section>
   
         <footer class='d-flex justify-content-center px-5 my-3'>
@@ -67,10 +89,6 @@
         // Note SPACE after each fruit name so gap before horizontal bars
         var nameList =  document.querySelector("#myHBarPlot").getAttribute("data-nameList");
         var valueList = document.querySelector("#myHBarPlot").getAttribute("data-valueList");
-        console.log(nameList)
-        console.log(valueList)
-        // REPLACE constants above with passed in variables.
-        // Use the '|safe' Jinja filter to mark them as safe (prevents your data being html-escaped). eg,
 
         // Define graph data
         const data = [{ 
@@ -78,7 +96,7 @@
             y: JSON.parse(nameList), 
             type:"bar", 
             orientation:"h", 
-            marker: {color:"darkgreen"}
+            marker: {color:"DarkSeaGreen"}
          }];
 
         // Define graph layout. Excluded a y-axis title as fruit names are self-explanatory.
@@ -87,19 +105,17 @@
                 range: [-5, 300], 
                 title: "Time spend", 
             }, 
-            'yaxis': {
+            yaxis: {
                 tickangle: -50,
             },
-            title: "Top five",
+            title: "Top five drivers overall",
             legend: {
-                bgcolor: "lightblue",
+                bgcolor: "blue",
             },
         };
 
         // Display using Plotly
         Plotly.newPlot("myHBarPlot", data, layout);
-
     </script>
-
 </body>
 </html>

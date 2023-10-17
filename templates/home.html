@@ -1,14 +1,11 @@
-{% extends "layout/visiterLayout.html" %}
+{% extends "layout/driverLayout.html" %}
+{% block title %}Home{% endblock %}
 {% block content %}
-
-<!-- driver_list is the variable passed in containing the list of drivers -->
-<!-- Add code to display a list of drivers -->
-
 <div class="row px-5 my-3 d-flex justify-content-center">
   <!-- List Courses Card -->
   {% with card_title='List of Courses',
     card_content='A Motorkhana has six courses, to view the details of courses, click the button below.',
-    link_url='listcourses',
+    link_url=url_for('courses'),
     btn_class='btn-success',
     link_text='Courses' 
   %}
@@ -16,40 +13,53 @@
     {% include 'component/card.html' %}
   {% endwith %}
 
-  <!-- List of Driver Card -->
-  {% with card_title='Driver Search',
-    card_content='Driver search works and accepts partial text
-    matches in search term.',
-    link_url='listdrivers',
+  <!-- Run Details -->
+  {% with card_title='Runs Details of a Driver',
+    card_content='Driver name selectable in dropdown. Run details
+    correct. Driver ID, names and car details included.',
+    link_url=url_for('drivers', is_run_details='dropdown'),
     btn_class='btn-success',
-    link_text='Driver List' 
+    link_text='Run Details' 
   %}
-
     {% include 'component/card.html' %}
   {% endwith %}
 </div>
 
 <div class="row px-5 my-2 d-flex justify-content-center">
-
-  <!-- List of Overall Results Card -->
-  {% with card_title='List of Drivers',
-    card_content='A Motorkhana has six courses, and each driver has two runs (attempts) at each course, with the best
-    of those two runs counting towards their overall result for the day',
-    link_url='overallresults',
+   <!-- List of Driver Card -->
+   {% with card_title='List of Drivers',
+    card_content='Driver list including car names. Clicking name
+    displays run details..',
+    link_url=url_for('drivers'),
     btn_class='btn-success',
-    link_text='Results' 
+    link_text='Drivers' 
   %}
+
     {% include 'component/card.html' %}
   {% endwith %}
 
-  <!-- Graph -->
+  <!-- Bar Graph -->
   {% with card_title='Graph',
     card_content='Display a horizontal bar graph of the top 5 drivers overall',
-    link_url='graph',
+    link_url=url_for('graph'),
     btn_class='btn-success',
-    link_text='Graph' 
+    link_text='Bar Graph' 
   %}
 
+    {% include 'component/card.html' %}
+  {% endwith %}
+
+</div>
+<div class="row px-5 my-3 d-flex justify-content-center">
+  <!-- List of Overall Results Card -->
+  {% with card_title='Overall Results',
+    card_content='A Motorkhana has six courses, and each driver has two runs (attempts) at each course, with the best of those two runs counting towards their overall result for the day.(juniors
+    and winners should be identified.)',
+    size_class='col-sm-8',
+    link_url=url_for('results'),
+    btn_class='btn-success',
+    link_text='Results' 
+  %}
     {% include 'component/card.html' %}
   {% endwith %}
 

@@ -1,0 +1,23 @@
+{% extends "layout/driverLayout.html" %}
+{% block title %}Driver Details{% endblock %}
+{% block content %}
+{{ super() }}
+<form 
+  class="row px-5 my-3 d-flex justify-content-center table-responsive-md"
+  method="POST" 
+  action="/driver">
+  <select 
+    class="form-select" 
+    name='selected_driver'
+    aria-label="Select driver from driver list by name"
+    onchange='this.form.submit()'>
+    <option selected>Open this select driver</option>
+    {% for driver in driver_list %}
+      <option value="{{ driver[0] }}">
+        {{ driver[1] }} {{ driver[2] }}
+      </option>
+    {% endfor%}
+  </select>
+</form>
+
+{% endblock %}
