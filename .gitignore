@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Local connection information
-.connect.py
+connect.py
