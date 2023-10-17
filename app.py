@@ -360,3 +360,21 @@ def edit_run():
         
         return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
     
+@app.route('/add_driver', methods=['GET'])
+def add_driver():
+    connection = getCursor()
+    car_query = 'SELECT car_num, model FROM car;'
+    course_query = 'SELECT course_id, name FROM course;'
+
+    connection.execute(car_query)
+    car_list = connection.fetchall()
+
+    connection.execute(course_query)
+    course_list = connection.fetchall()
+    
+    run_num = [1, 2]
+
+    return render_template('routes/admin/addDriver.html', 
+                           car_list = car_list, 
+                           course_list = course_list,
+                           run_num=run_num)
