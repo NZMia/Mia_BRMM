@@ -9,8 +9,8 @@
   {% with card_title='Junior driver List',
     card_content='Juniors are aged 12-25, Junior drivers who are 16 or
     younger must also have a designated caregiver (the driver ID of another driver who isn’t a junior). ',
-    link_url=url_for('juniorList'),
-    btn_class='btn-warning',
+    link_url=url_for('junior_list'),
+    btn_class='btn-warning text-success-emphasis',
     link_text='Junior' 
   %}
 
@@ -20,8 +20,8 @@
   <!-- List of Driver Card -->
   {% with card_title='Search for Drivers',
     card_content='Searching driver by typing partial first name or surname.',
-    link_url=url_for('driversearch'),
-    btn_class='btn-warning',
+    link_url=url_for('driver_search'),
+    btn_class='btn-warning text-success-emphasis',
     link_text='Drivers' 
   %}
 
@@ -34,8 +34,8 @@
   <!-- List of Overall Results Card -->
   {% with card_title='Edit Run',
     card_content='Edit run content',
-    link_url=url_for('runsearch'),
-    btn_class='btn-warning',
+    link_url=url_for('run_search'),
+    btn_class='btn-warning text-success-emphasis',
     link_text='Edit Run' 
   %}
 
@@ -46,7 +46,7 @@
     card_content='New driver can be added, existing car can be
     selected',
     link_url="/",
-    btn_class='btn-warning',
+    btn_class='btn-warning text-success-emphasis',
     link_text='Add Driver' 
   %}
 

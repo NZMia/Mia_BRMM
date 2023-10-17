@@ -14,6 +14,7 @@ app = Flask(__name__)
 
 dbconn = None
 connection = None
+is_redirect = False
 
 def getCursor():
     global dbconn
@@ -220,8 +221,8 @@ def graph():
 def admin():
     return render_template('admin.html')
 
-@app.route('/juniorList', methods=['GET'])
-def juniorList():
+@app.route('/junior_list', methods=['GET'])
+def junior_list():
     connection = getCursor()
     query = """
         SELECT d.*, IFNULL(CONCAT(c.first_name, ' ', c.surname), 'NO CAREGIVER ')  AS caregiver_name
@@ -236,8 +237,8 @@ def juniorList():
     junior_list = connection.fetchall()
     return render_template('routes/admin/juniorList.html', junior_list = junior_list) 
 
-@app.route('/driversearch', methods=['GET', 'POST'])
-def driversearch():
+@app.route('/driver_search', methods=['GET', 'POST'])
+def driver_search():
     driver_info = []
     show_results = False
 
@@ -259,10 +260,12 @@ def driversearch():
     
     return render_template('routes/admin/driverSearch.html', driver_info = driver_info, show_results = show_results)
 
-@app.route('/runsearch', methods=['GET', 'POST'])
-def runsearch():
+@app.route('/run_search', methods=['GET', 'POST'])
+def run_search():
     run_info = []
     show_results = False
+    driver_id = ''
+    course_id =''
     connection = getCursor()
     driver_info = """
         SELECT d.driver_id, concat(d.first_name, ' ', d.surname) as name
@@ -278,10 +281,14 @@ def runsearch():
     connection.execute(course_info)
     course_details = connection.fetchall()
 
-    driver_id = request.args.get('driver_id')
-    course_id = request.args.get('course_id')
+    if request.method == 'POST':
+        if 'selected_driver' in request.form:
+            driver_id = request.form['selected_driver']
+            # Process the selected driver form here
+        else:
+            course_id = request.form['selected_course']
 
-    if driver_id is not None:
+    if len(driver_id) > 0:
         driver_run_query = """
             SELECT  d.driver_id, concat(d.first_name, ' ', d.surname) as name, r.crs_id, r.run_num, r.seconds, r.cones, r.wd
             FROM driver as d
@@ -293,9 +300,9 @@ def runsearch():
         run_info = connection.fetchall()
         show_results = True
   
-    if course_id is not None:
+    if len(course_id) > 0:
         course_run_query = """ 
-            SELECT c.course_id, c.name, r.dr_id, r.run_num, r.seconds, r.cones, r.wd
+            SELECT r.dr_id, c.name, c.course_id, r.run_num, r.seconds, r.cones, r.wd
             FROM course as c
                 JOIN run as r on r.crs_id = c.course_id
             WHERE c.course_id = %s;
@@ -303,11 +310,53 @@ def runsearch():
         connection.execute(course_run_query, (course_id,))
         run_info = connection.fetchall()
         show_results = True
-    print(run_info)
+    
     return render_template(
-        'routes/admin/editRun.html',
+        'routes/admin/runSearch.html',
         driver_run_info = driver_run_info,
         course_details = course_details,
         run_info = run_info, 
         show_results = show_results
     )
+
+@app.route('/edit_run', methods=['GET', 'POST'])
+def edit_run():
+    connection = getCursor()
+    is_redirect = False
+    if request.method == 'POST':
+        driver_id = request.form['driver_id']
+        course_id = request.form['course_id']
+        run_num = request.form['run_num']
+        name = request.form['name']
+
+        if 'seconds' in request.form:
+            seconds = request.form['seconds']
+        if 'cones' in request.form:
+            cones = request.form['cones']
+        if 'wd' in request.form:
+            wd = request.form['wd']
+
+        query = """
+            UPDATE run AS r
+            JOIN driver AS d ON r.dr_id = d.driver_id
+            SET r.seconds = %s, r.cones = %s, r.wd = %s
+            WHERE d.driver_id = %s
+            AND r.crs_id = %s
+            AND r.run_num = %s;
+        """
+        connection.execute(query, (seconds, cones, wd, driver_id, course_id, run_num))
+        is_redirect = True
+        return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
+    else:
+        
+        is_redirect = False
+        driver_id = request.args.get('driver_id')
+        name = request.args.get('name')
+        course_id = request.args.get('course_id')
+        run_num = request.args.get('run_num')
+        seconds = request.args.get('seconds')
+        cones = request.args.get('cones')
+        wd = request.args.get('wd')
+        
+        return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
+    

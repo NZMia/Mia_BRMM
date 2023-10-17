@@ -5,11 +5,27 @@
 <div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
   <h3 class='text-success-emphasis'>Search for Drivers</h3>
   
-  <h1>Search for Drivers</h1>
-  <form method="POST" action="/driversearch">
-      <input type="text" name="partial_text" placeholder="Enter partial first name or surname">
-      <input type="submit" value="Search">
+  <form class="input-group flex-nowrap" method="POST" action="/driver_search">
+    <span 
+      class="input-group-text" 
+      id="addon-wrapping">
+      Search By Name 
+    </span>
+    <input 
+      type="text" 
+      class="form-control" 
+      placeholder="Enter partial first name or surname"
+      name='partial_text'
+      aria-label="partial text for search" 
+      aria-describedby="addon-wrapping">
+    <button 
+      class="btn btn-warning"
+      type='submit'>
+      Search
+    </button>
   </form>
+  <p class='text-danger fs-6 fst-italic'>* Search for drivers by first name or surname, allowing for partial text matches.</p>
+  
   <table class="table table-hover table-bordered m-3 {% if show_results %}visible{% else %}invisible{% endif %}">
     <thead>
       <tr>
@@ -23,12 +39,19 @@
       </tr>
     </thead>
     <tbody class="table-group-divider ">
-      {% for driver in driver_info %}
-        <tr class='{% if driver[4] is not none and 12 <= driver[4] <= 25  %}table-warning{% endif %}'>
-          {% for template in driver %}
-            <td class='text-success-emphasis'>{{ template }}</td>
-          {% endfor %}
-      {% endfor %}
+      {% if driver_info %}
+        {% for driver in driver_info %}
+          <tr class='{% if driver[4] is not none and 12 <= driver[4] <= 25  %}table-warning{% endif %}'>
+            {% for template in driver %}
+              <td class='text-success-emphasis'>{{ template }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td  class='text-center text-warning bg-dark' colspan='7'>Not Fount</td>
+        </tr> 
+      {% endif %}
     </tbody>
   </table>
 </div>
