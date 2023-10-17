@@ -1,49 +1,118 @@
 {% extends "layout/adminLayout.html" %}
-{% block title %}Junior driver List{% endblock %}
+{% block title %}Edit Run Form{% endblock %}
 {% block content %}
 {{ super() }}
-<div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
-  <h3 class='text-success-emphasis'>Search for Drivers</h3>
-  <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Get Run by Driver
-    </button>
-    <ul class="dropdown-menu">
-      {% for driver in driver_run_info %}
-        <li><a class="dropdown-item" href={{ url_for('runsearch',driver_id=driver[0]) }}>{{ driver[1] }}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
-  <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Get Run by Course
-    </button>
-    <ul class="dropdown-menu">
-      {% for course in course_details %}
-        <li><a class="dropdown-item" href={{ url_for('runsearch',course_id=course[0]) }}>{{ course[1] }}</a></li>
-      {% endfor %}
-    </ul>
-  </div>    
-  <table class="table table-hover table-bordered m-3 {% if show_results %}visible{% else %}invisible{% endif %}">
-    <thead>
-      <tr>
-        <th class='text-success-emphasis'>Driver_id</th>
-        <th class='text-success-emphasis'>Name</th>
-        <th class='text-success-emphasis'>Course Id</th>
-        <th class='text-success-emphasis'>Run Time</th>
-        <th class='text-success-emphasis'>Seconds</th>
-        <th class='text-success-emphasis'>Cons</th>
-        <th class='text-success-emphasis'>WD</th>
-      </tr>
-    </thead>
-    <tbody class="table-group-divider ">
-      {% for run in run_info %}
-        <tr>
-          {% for template in run %}
-            <td class='text-success-emphasis'>{{ template }}</td>
-          {% endfor %}
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+<div class="row px-5 my-3 d-flex justify-content-center">
+  <h3 class='text-success-emphasis'>Edit Run Form</h3>
+  <form class='shadow rounded border border-0 p-5 col-sm-8 col-lg-6' method='POST' action='/edit_run'>
+    <div class="mb-3 row">
+      <label for="driver_id" class="col-sm-2 col-form-label">Driver ID</label>
+      <div class="col-sm-10">
+        <input 
+          type="text" 
+          readonly 
+          class="form-control-plaintext" 
+          id="driver_id" 
+          value={{ driver_id }}
+          name='driver_id'>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="name" class="col-sm-2 col-form-label">Name</label>
+      <div class="col-sm-10">
+        <input 
+          type="text" 
+          readonly 
+          class="form-control-plaintext" 
+          id="name" 
+          value={{ name }}
+          name='name'>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="course_id" class="col-sm-2 col-form-label">Course ID</label>
+      <div class="col-sm-10">
+        <input 
+          type="text" 
+          readonly 
+          class="form-control-plaintext" 
+          id="course_id" 
+          value={{ course_id }}
+          name='course_id'>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="run_num" class="col-sm-2 col-form-label">Run Num</label>
+      <div class="col-sm-10">
+        <input 
+          type="text" 
+          readonly 
+          class="form-control-plaintext" 
+          id="run_num"
+          value={{ run_num }}
+          name='run_num'>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="seconds" class="col-sm-2 col-form-label">Seconds</label>
+      <div class="col-sm-10">
+        <input 
+          type="number" 
+          class="form-control" 
+          id='seconds'
+          name='seconds'
+          value={{ seconds }}
+          min="1" 
+          max="1000" 
+          step="0.01"
+          {% if is_redirect %} readonly {% endif %}
+          required
+          >
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="cones" class="col-sm-2 col-form-label">Cones</label>
+      <div class="col-sm-10">
+        <input 
+          type="number" 
+          class="form-control" 
+          id="cones" 
+          name='cones'
+          value={{ cones }}
+          min="0" 
+          max="20" 
+          {% if is_redirect %} readonly {% endif %}
+          required
+          >
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="wd" class="col-sm-2 col-form-label">WD</label>
+      <div class="col-sm-10">
+        <input 
+          type="number" 
+          class="form-control" 
+          name='wd'
+          id="wd" 
+          value={{ wd }}
+          min="0" 
+          max="10"
+          {% if is_redirect %} readonly {% endif %}
+          required
+          >
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <button 
+        type="submit" 
+        class="btn btn-warning mb-3 text-success-emphasis"  {% if is_redirect %} disabled {% endif %}>
+        {% if is_redirect %}
+          Updated
+        {% else %}
+          Submit
+        {% endif %}
+      </button>
+    </div>
+  </form>
+</div>  
 {% endblock %}

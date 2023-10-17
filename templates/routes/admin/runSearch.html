@@ -1,0 +1,85 @@
+{% extends "layout/adminLayout.html" %}
+{% block title %}Junior driver List{% endblock %}
+{% block content %}
+{{ super() }}
+<div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
+  <h3 class='text-success-emphasis'>Search for Drivers</h3>
+  <form 
+    class="input-group flex-nowrap col-sm-6" 
+    method="POST" 
+    action="/run_search">
+    <span 
+      class="input-group-text" 
+      id="addon-wrapping">
+      Search Run by Driver
+    </span>
+    <select 
+      class="form-select" 
+      name='selected_driver'
+      aria-label="Select Runs from driver list by name"
+      onchange='this.form.submit()'>
+      <option selected>Open this select course</option>
+      {% for driver in driver_run_info %}
+        <option value="{{ driver[0] }}">
+          {{ driver[1] }} {{ driver[2] }}
+        </option>
+      {% endfor%}
+    </select>
+  </form>
+  <form 
+    class="input-group flex-nowrap col-sm-5" 
+    method="POST" 
+    action="/run_search">
+    <span 
+      class="input-group-text" 
+      id="addon-wrapping_1">
+      Search Run by Course
+    </span>
+    <select 
+      class="form-select" 
+      name='selected_course'
+      aria-label="Select Runs from driver list by name"
+      onchange='this.form.submit()'>
+      <option selected>Open this select driver</option>
+      {% for course in course_details %}
+        <option value="{{ course[0] }}">
+          {{ course[1] }}
+        </option>
+      {% endfor%}
+    </select>
+  </form>
+  
+  <table class="table table-hover table-bordered m-3 {% if show_results %}visible{% else %}invisible{% endif %}">
+    <thead>
+      <tr>
+        <th class='text-success-emphasis'>Driver_id</th>
+        <th class='text-success-emphasis'>Name</th>
+        <th class='text-success-emphasis'>Course Id</th>
+        <th class='text-success-emphasis'>Run Num</th>
+        <th class='text-success-emphasis'>Seconds</th>
+        <th class='text-success-emphasis'>Cones</th>
+        <th class='text-success-emphasis'>WD</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider ">
+      {% for run in run_info %}
+        <tr>
+          {% for template in run %}
+            <td class='text-success-emphasis'>{{ template }}</td>
+          {% endfor %}
+          <td class='text-success-emphasis'>
+            <a href="{{ url_for('edit_run',**{
+                'driver_id': run[0],
+                'name': run[1],
+                'course_id': run[2],
+                'run_num': run[3],
+                'seconds': run[4],
+                'cones': run[5],
+                'wd': run[6]
+            })}}">Edit Run</a>
+          </td>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
