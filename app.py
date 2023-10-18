@@ -19,9 +19,13 @@ is_redirect = False
 def getCursor():
     global dbconn
     global connection
-    connection = mysql.connector.connect(user=connect.dbuser, \
-    password=connect.dbpass, host=connect.dbhost, \
-    database=connect.dbname, autocommit=True)
+    connection = mysql.connector.connect(
+        user=connect.dbuser, 
+        password=connect.dbpass, 
+        host=connect.dbhost, 
+        database=connect.dbname, 
+        autocommit=True
+    )
     dbconn = connection.cursor()
     return dbconn
 
@@ -106,6 +110,74 @@ def getDrivers():
     connection.execute(query)
     driverList = connection.fetchall()
     return driverList
+
+def calculate_age(date_of_birth):
+    input_date = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+    current_date = datetime.now().date()
+
+    current_age = current_date.year - input_date.year - ((current_date.month, current_date.day) < (input_date.month, input_date.day))
+
+    return current_age
+
+def add_driver_form_validation(current_age, has_not_caregiver, date_of_birth):
+    error_message = []
+    input_date = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+    current_date = datetime.now().date()
+
+    if input_date > current_date:
+        error_message.append('Date of birth cannot be in the future')
+    if current_age < 12:
+        error_message.append('Driver must be at least 12 years old')
+    if current_age >= 12 and current_age <= 16 and has_not_caregiver :
+        error_message.append('Drivers who are 16 or younger must also have a caregiver')
+
+    return error_message
+
+def add_driver_to_db(first_name, surname, date_of_birth, age, caregiver, car):
+    connection = getCursor()
+    try:
+    # Create a new driver and add to database
+        create_query = """
+            INSERT INTO driver (first_name, surname, date_of_birth, age, car, caregiver)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        """
+        if len(date_of_birth) == 0:
+            date_of_birth_format = None
+            print('date of birth is null', date_of_birth)
+        else:
+            date_of_birth_format = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+            print('date of birth is not null', date_of_birth)
+
+        driver_date = (first_name, surname, date_of_birth_format, age, car, caregiver)
+        connection.execute(create_query, driver_date)
+
+        # Get the driver_id of the new driver
+        driver_id = connection.lastrowid
+
+        # Get the course_id from courses
+        course_query = 'SELECT course_id FROM course;'
+        connection.execute(course_query)
+        course_list = connection.fetchall()
+
+        # Create a run list
+        run_list = [1, 2]
+
+        # Create a run for each course for the new driver
+        for course in course_list:
+            for run in run_list:
+                run_query = """
+                    INSERT INTO run (dr_id, crs_id, run_num, seconds, cones, wd)
+                    VALUES (%s, %s, %s, %s, %s, %s);
+                """
+                run_data = (driver_id, course[0], run, None, None, 0)
+                connection.execute(run_query, run_data)
+    except Exception as e:
+        raise e
+    finally:
+        connection.close()
+
+    connection.close()
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -284,7 +356,6 @@ def run_search():
     if request.method == 'POST':
         if 'selected_driver' in request.form:
             driver_id = request.form['selected_driver']
-            # Process the selected driver form here
         else:
             course_id = request.form['selected_course']
 
@@ -348,7 +419,6 @@ def edit_run():
         is_redirect = True
         return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
     else:
-        
         is_redirect = False
         driver_id = request.args.get('driver_id')
         name = request.args.get('name')
@@ -360,21 +430,61 @@ def edit_run():
         
         return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
     
-@app.route('/add_driver', methods=['GET'])
+@app.route('/add_driver', methods=['GET', 'POST'])
 def add_driver():
     connection = getCursor()
     car_query = 'SELECT car_num, model FROM car;'
     course_query = 'SELECT course_id, name FROM course;'
-
+    caregiver_query = """
+        SELECT driver_id, CONCAT(first_name, " ", surname) AS name 
+        FROM driver 
+        WHERE age > 25
+        OR age is NULL;
+    """
     connection.execute(car_query)
     car_list = connection.fetchall()
 
     connection.execute(course_query)
     course_list = connection.fetchall()
     
-    run_num = [1, 2]
+    connection.execute(caregiver_query)
+    caregiver_list = connection.fetchall()
 
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        surname = request.form['surname']
+        car = request.form['car']
+        date_of_birth = request.form.get('date_of_birth')
+        caregiver = request.form.get('caregiver')
+        age = None
+        is_not_caregiver = False
+
+        if caregiver is None:
+            is_not_caregiver = True
+            print('No caregiver')
+        else:
+            is_not_caregiver = False
+            print('Has caregiver')
+
+        if date_of_birth:
+            age = calculate_age(date_of_birth)
+            error_message = add_driver_form_validation(age, is_not_caregiver, date_of_birth)
+            
+            if len(error_message) != 0:
+                return render_template('routes/admin/addDriver.html', 
+                                car_list = car_list, 
+                                course_list = course_list,
+                                caregiver_list = caregiver_list,
+                                error_message = error_message)
+            else:  
+                add_driver_to_db(first_name, surname, date_of_birth, age, caregiver, car)
+                return redirect('/run_search')
+        else:
+            add_driver_to_db(first_name, surname, date_of_birth, age, caregiver, car)
+            return redirect('/run_search')
+    
     return render_template('routes/admin/addDriver.html', 
                            car_list = car_list, 
                            course_list = course_list,
-                           run_num=run_num)
+                           caregiver_list = caregiver_list
+                        )
