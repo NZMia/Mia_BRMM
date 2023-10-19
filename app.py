@@ -106,7 +106,12 @@ def getOverallResults():
 
 def getDrivers():
     connection = getCursor()
-    query = 'SELECT * FROM driver, car WHERE driver.car = car.car_num;'
+    query = """
+        SELECT * 
+        FROM driver, car 
+        WHERE driver.car = car.car_num
+        ORDER BY driver.age desc;
+    """
     connection.execute(query)
     driverList = connection.fetchall()
     return driverList
