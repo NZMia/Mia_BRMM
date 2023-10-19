@@ -3,8 +3,17 @@
 {% block content %}
 {{ super() }}
 <div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
-  <h3 class='text-success-emphasis'>Driver Details</h2>
-  
+  <div class="">
+    <h3 class='text-success-emphasis'>Driver Details</h2>
+    <p>Driver_ID: {{ driver[0] }}</p>
+    <p>Driver_Name: {{ driver[1] }}</p>
+  </div>
+  <div class="">
+    <h3 class='text-success-emphasis'>Car Details</h2>
+    <p>Car_Model: {{ driver[2] }}</p>
+    <p>Driver_Class: {{ driver[3] }}</p>
+  </div>
+
   <table class="table table-bordered m-3">
     <thead class="table-success">
       <tr>
@@ -38,11 +47,30 @@
               <tbody class='table-group-divider'>
                 {% for run in runs %}
                   <tr>
-                    {% for field in run %}
-                      <td class='text-success-emphasis align-middle'>{{ field }}</td>
-                    {% endfor %}
-                  {% endfor %}
+                    <td class='text-success-emphasis align-middle'>{{ run[0] }}</td>
+                    <td class='text-success-emphasis align-middle'>{{ run[1] }}</td>
+                    <td class='text-success-emphasis align-middle'>
+                      {% if run[2] is not none %}
+                        {{ run[2] }}
+                      {% endif %}
+                    </td>
+                    <td class='text-success-emphasis align-middle'>
+                      {% if run[3] is not none %}
+                        {{ run[3] }}
+                      {% endif %}
+                    </td>
+                    <td class='text-success-emphasis align-middle'>
+                      {% if run[4] != 0 %}
+                        WD
+                      {% endif %}
+                    </td>
+                    <td class='text-success-emphasis align-middle'>
+                      {% if run[5] is not none %}
+                        {{ run[5] }}
+                      {% endif %}
+                    </td>
                   </tr>
+                  {% endfor %}
               </tbody>
             </table>
           </td>
