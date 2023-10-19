@@ -64,9 +64,26 @@
     <tbody class="table-group-divider ">
       {% for run in run_info %}
         <tr>
-          {% for template in run %}
-            <td class='text-success-emphasis'>{{ template }}</td>
-          {% endfor %}
+          <td class='text-success-emphasis'>{{ run[0] }}</td>
+          <td class='text-success-emphasis'>{{ run[1] }}</td>
+          <td class='text-success-emphasis'>{{ run[2] }}</td>
+          <td class='text-success-emphasis'>{{ run[3] }}</td>
+          <td class='text-success-emphasis'>
+            {% if run[4] is not none %}
+              {{ run[4] }}
+            {% endif %}
+          </td>
+          <td class='text-success-emphasis'>
+            {% if run[5] is not none %}
+              {{ run[5] }}
+            {% endif %}
+          </td>
+
+          <td class='text-success-emphasis'>
+            {% if run[6] != 0 %}
+              WD
+            {% endif %}
+          </td>
           <td class='text-success-emphasis'>
             <a href="{{ url_for('edit_run',**{
                 'driver_id': run[0],

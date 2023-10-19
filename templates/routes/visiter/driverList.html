@@ -8,12 +8,11 @@
     <table class="table table-hover table-bordered m-3">
       <thead>
         <tr>
-          <th colspan="5" class='text-center text-success-emphasis'>Driver Info</th>
+          <th colspan="4" class='text-center text-success-emphasis'>Driver Info</th>
           <th colspan="2" class='text-center text-success-emphasis'>Car Info</th>
         </tr>
         <tr>
-          <th class='text-success-emphasis'>Surname Name</th>
-          <th class='text-success-emphasis'>First Name</th>
+          <th class='text-success-emphasis'>Name (surname first_name)</th>
           <th class='text-success-emphasis'>Date of Birth</th>
           <th class='text-success-emphasis'>Age</th>
           <th class='text-success-emphasis'>Caregiver</th>
@@ -27,18 +26,24 @@
             
             <td class='text-success-emphasis'>
               <a href="{{ url_for('driver', driver_id=driver[0]) }}">
-                {{ driver[2] }}
+                {{ driver[2] }}  {{ driver[1] }}
               </a>
             </td>
             <td class='text-success-emphasis'>
-              <a href="{{ url_for('driver', driver_id=driver[0]) }}">
-                {{ driver[1] }}
-              </a>
+              {% if driver[3] is not none %}
+                {{ driver[3] }}
+              {% endif %}
             </td>
-
-            <td class='text-success-emphasis'>{{ driver[3] }}</td>
-            <td class='text-success-emphasis'>{{ driver[4] }}</td>
-            <td class='text-success-emphasis'>{{ driver[5] }}</td>
+            <td class='text-success-emphasis'>
+              {% if driver[4] is not none %}
+                {{ driver[4] }}
+              {% endif %}
+            </td>
+            <td class='text-success-emphasis'>
+              {% if driver[5] is not none %}
+                {{ driver[5] }}
+              {% endif %}
+            </td>
 
             <td class='text-success-emphasis'>{{ driver[8] }}</td>
             <td class='text-success-emphasis'>{{ driver[9] }}</td>
