@@ -8,7 +8,7 @@ This web application is built for the BRMM Car Club to manage and display result
 ![development: DONE](https://img.shields.io/badge/development-DONE-informational.svg?style=plastic)
 
 
-### Structure
+## Structure  
 
 ---
 
@@ -38,7 +38,7 @@ This web application is built for the BRMM Car Club to manage and display result
   - home.html (Home page for visitors/drivers)
 - app.py (Main Flask application file)  
 
-### Routes
+## Routes
 
 ---
 
@@ -64,7 +64,7 @@ This web application is built for the BRMM Car Club to manage and display result
 | `/add_driver` | GET  | Provides a form for adding new drivers with various validation checks. | routes/admin/addDriver.html | None |
 | `/add_driver` | POST | Provides a form for adding new drivers with various validation checks. | routes/admin/addDriver.html | - POST: Form fields for adding a new driver (e.g., `first_name`, `surname`, `car`, `date_of_birth`, `caregiver`). |  
 
-### Assumptions and Design Decisions
+## Assumptions and Design Decisions
 
 ---
 
@@ -103,7 +103,7 @@ This web application is built for the BRMM Car Club to manage and display result
 #### Clear Project Structure:
   - A clear and well-structured directory layout is essential for making the iterative development process more manageable. (see above Structure)
 
-### Usage
+## Usage
 
 ---
 
@@ -114,7 +114,7 @@ To run the application:
 3. Set up the MySQL database and update the database configuration in `connect.py`.
 4. Run `python app.py` to start the Flask application.
 
-### Database 
+## Database 
 
 ---
 
@@ -153,26 +153,26 @@ To run the application:
     - Functionality Restrictions:
       - Different roles may have specific functionalities they need to perform. For instance, administrators can add a new driver, but this functionality should not be available to visitors. Additionally, only administrators can edit results. If both user roles have access to all functionalities, it can lead to misuse or unintended actions. For example, a driver might mistakenly modify another driver's data. This underscores the significance of restricting access to functionalities based on user roles to prevent inadvertent actions and ensure the proper execution of tasks.
 
-### Contributors  
+## Contributors  
 
 ---
 
 - [Mia](https://github.com/NZMia) - Project Developer
 
-### License  
+## License  
 
 ---
 
 This project is licensed under the [MIT License](LICENSE).
 
 
-#### Local env
+## Local env
 
 Python 3.9.6   
 pip 23.2.1  
 
 
-#### Technology
+## Technology
 
 Python  
 Flask  
