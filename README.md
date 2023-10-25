@@ -29,7 +29,7 @@ This web application is built for the BRMM Car Club to manage and display result
       - runSearch.html (Run search page)
     - visitor (driver)
       - courseList.html (List of courses)
-      - driverDetail.html (Driver details page)
+      - driverDetail.html (Driver's run details page)
       - driverList.html (List of all drivers)
       - driverListDropdown.html (Dropdown list of drivers)
       - overallResult.html (Overall results page)
