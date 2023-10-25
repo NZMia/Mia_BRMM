@@ -12,7 +12,7 @@
           <th colspan="2" class='text-center text-success-emphasis'>Car Info</th>
         </tr>
         <tr>
-          <th class='text-success-emphasis'>Name (surname first_name)</th>
+          <th class='text-success-emphasis'>Name (Surname First_name)</th>
           <th class='text-success-emphasis'>Date of Birth</th>
           <th class='text-success-emphasis'>Age</th>
           <th class='text-success-emphasis'>Caregiver</th>
@@ -50,6 +50,11 @@
         {% endfor %}
       </tbody>
     </table>
+    <div>
+      <h6 class='text-danger text-end'>
+        If empty Date of Birth, Age, Caregiver, means the driver is not junior.
+      </h6>
+    </div>
 </div>
 
 {% endblock %}

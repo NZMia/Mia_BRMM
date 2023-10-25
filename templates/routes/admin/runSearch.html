@@ -27,7 +27,7 @@
     </select>
   </form>
   <form 
-    class="input-group flex-nowrap col-sm-5" 
+    class="input-group flex-nowrap col-sm-5 py-3" 
     method="POST" 
     action="/run_search">
     <span 
@@ -95,8 +95,21 @@
                 'wd': run[6]
             })}}">Edit Run</a>
           </td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
+  <div class="{% if show_results %}visible{% else %}invisible{% endif %}">
+    <h6 class='text-danger text-end'>
+      Empty seconds means the driver did not finish the course.
+    </h6>
+    <h6 class='text-danger text-end'>
+      Empty cones means the driver did not hit any cones.
+    </h6>
+    <h6 class='text-danger text-end'>
+      Empty WD means the driver did not have wrong direction.
+      WD means has wrong direction.
+    </h6>
+  </div>
 </div>
 {% endblock %}

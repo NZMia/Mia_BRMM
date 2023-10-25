@@ -43,7 +43,11 @@
         {% for driver in driver_info %}
           <tr class='{% if driver[4] is not none and 12 <= driver[4] <= 25  %}table-warning{% endif %}'>
             {% for template in driver %}
-              <td class='text-success-emphasis'>{{ template }}</td>
+              <td class='text-success-emphasis'>
+                {% if template %}
+                  {{ template }}
+                {% endif %}
+              </td>
             {% endfor %}
           </tr>
         {% endfor %}
@@ -54,5 +58,10 @@
       {% endif %}
     </tbody>
   </table>
+  <div class="{% if show_results %}visible{% else %}invisible{% endif %}">
+    <h6 class='text-danger text-end'>
+      If empty Date of Birth, Age, Caregiver, means the driver is not junior.
+    </h6>
+  </div>
 </div>
 {% endblock %}

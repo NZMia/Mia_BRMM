@@ -4,7 +4,9 @@
 {{ super() }}
 <div class="row px-5 my-3 d-flex justify-content-center table-responsive-md">
   <h3 class='text-success-emphasis'>Overall Results</h2>
-  
+  <h6 class='text-danger text-end'>
+    Empty Age means the driver is not junior.
+  </h6>
   <table class="table table-hover table-bordered m-3">
     <thead>
       <!-- <tr>
@@ -25,11 +27,13 @@
         <tr class='{% if key[2] is not none and 12 <= key[2] <= 25  %}table-warning{% endif %}'>
           <td class='text-success-emphasis'>{{ key[0] }}</td>
           <td class='text-success-emphasis'>{{ key[1] }}</td>
-          <td class='text-success-emphasis'>{{ key[2] }}</td>
+          <td class='text-success-emphasis'>
+            {% if key[2] %}
+              {{ key[2] }}
+            {% endif %}
+          </td>
           <td class='text-success-emphasis'>
             {{ key[3] }}
-            
-            
           </td>
           <td class='text-success-emphasis'>
             {{ key[4] }}
@@ -60,7 +64,6 @@
                   <tr>
                     <td class='text-success-emphasis align-middle'>{{ cr }}</td>
                     <td class='text-success-emphasis align-middle'>{{ time }}</td>
-                
                   </tr>
                   {% endfor %}
                 {% endfor %}
