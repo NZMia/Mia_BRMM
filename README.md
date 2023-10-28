@@ -50,7 +50,7 @@ This web application is built for the BRMM Car Club to manage and display result
 | `/drivers?is_run_details=dropdown` | GET | Provides a dropdown list of drivers. | routes/visitor/driverListDropdown.html | `is_run_details` (query parameter) - Used to determine whether to display a dropdown list of drivers. |
 | `/driver` | GET | Displays details for a specific driver, including their runs. |  routes/visitor/driverDetail.html |- GET: `driver_id` (query parameter) - Specifies the driver's ID for displaying details. | 
 | `/driver` | POST | Displays details for a specific driver, including their runs. |  routes/visitor/driverDetail.html | - POST: `selected_driver` (form data) - Selects a driver for displaying details. |
-| `/results` | GET | Displays overall results for drivers. |routes/visitor/overallResult.html | None |
+| `/overall_results` | GET | Displays overall results for drivers. |routes/visitor/overallResult.html | None |
 | `/graph` | GET | Displays a horizontal bar graph of the top 5 drivers. | routes/visitor/top5graph.html | None |
 | `/admin` | GET | Entry point for the admin dashboard. | admin.html | None |
 | `/junior_list` | GET | Lists junior drivers with or without caregivers. | routes/admin/juniorList.html |None |

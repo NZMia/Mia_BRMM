@@ -29,7 +29,15 @@ def getCursor():
     dbconn = connection.cursor()
     return dbconn
 
-def getOverallResults():
+def customer_sort(item):
+    overall_result = item[1]['overall_results']
+
+    if overall_result  == 'NQ':
+        return (float('inf'), item[0])
+    else:
+        return (overall_result, item[0])
+    
+def getOverallResult():
     connection = getCursor()
     query = """
         WITH RankedData AS (
@@ -56,53 +64,58 @@ def getOverallResults():
             JOIN run AS r ON d.driver_id = r.dr_id
             JOIN course AS c ON r.crs_id = c.course_id
             JOIN car AS car ON d.car = car.car_num
-        ),
-        RankedDataWithCourseTime AS (
-            SELECT 
-                driver_id,
-                name,
-                age,
-                model,
-                course_id,
-                run_total,
-                CASE
-                    WHEN COALESCE(run_total, 0) = 0 THEN 'dnf'
-                    ELSE FORMAT(run_total, 2)
-                END AS course_time
-            FROM RankedData AS t1
-            WHERE row_num = 1
         )
-
         SELECT 
-            driver_id,
-            name,
-            age,
-            model,
-            course_id,
-            course_time,
-            CASE
-                WHEN 'dnf' IN (
-                    SELECT course_time 
-                    FROM RankedDataWithCourseTime AS rdc 
-                    WHERE rdc.driver_id = rdc1.driver_id
-                ) THEN 'NQ'
-                ELSE FORMAT(
-                    SUM(
-                        CAST(run_total AS DECIMAL(10, 2))
-                    ) OVER (PARTITION BY rdc1.driver_id)
-                    ,2)
-            END AS overall_results
-        FROM RankedDataWithCourseTime AS rdc1
-        ORDER BY 
-            CASE 
-                WHEN overall_results = 'NQ' THEN 1
-                ELSE 0
-            END,
-            overall_results,
-            course_id;
+			driver_id,
+			name,
+			age,
+			model,
+			course_id,
+			CASE
+				WHEN COALESCE(run_total, 0) = 0 THEN 'dnf'
+				ELSE FORMAT(run_total, 2)
+			END AS course_time
+		FROM RankedData AS t1
+		WHERE row_num = 1
     """
     connection.execute(query)
-    return connection.fetchall()
+    original_data = connection.fetchall()
+    calculate_overall_results = {}
+
+    for item in original_data:
+        driver_id, name, age, model, course_id, course_time = item
+        # key = (driver_id, name, age, model)
+        key = (driver_id, name, age, model)
+        # value = course_time
+        value = float(item[-1]) if item[-1] != 'dnf' else 0
+    
+
+        # calculate_overall_results: sum up the course_time for each driver
+        # if the driver has not finished a course, the overall result will be 'NQ', 
+        # otherwise, it will be the sum of course_time
+        if key not in calculate_overall_results.keys():
+            calculate_overall_results[key] = {
+                'overall_results': value,
+                course_id: course_time
+            }
+        else:
+            # if the driver has not finished a course, the overall result will be 'NQ',
+            # otherwise, it will be the sum of course_time
+            if value != 0:
+                calculate_overall_results[key]['overall_results'] = round(
+                    calculate_overall_results[key]['overall_results'] + value, 
+                    2
+                )
+            else:
+                calculate_overall_results[key]['overall_results'] = 'NQ'
+            
+            # if the course has not been added to the driver's course list, add it
+            if course_id not in calculate_overall_results[key]:
+                calculate_overall_results[key][course_id] = course_time
+
+    sorted_calculated_overall_result = sorted(calculate_overall_results.items(), key=customer_sort)
+
+    return sorted_calculated_overall_result
 
 def getDrivers():
     connection = getCursor()
@@ -255,42 +268,28 @@ def driver():
     return render_template('routes/visiter/driverDetails.html', driver = driver_info, runs = run_details)
 
 # Route: Overall Results
-@app.route('/results', methods=['GET'])
-def results():
+@app.route('/overall_results', methods=['GET'])
+def overall_results():
+    sorted_data = getOverallResult()
 
-    original_data = getOverallResults()
-    course_times_dic = {}
-
-    for item in original_data:
-        driver_id, name, age, model, course_id, course_time, overall_results = item
-        key = (driver_id, name, age, model, overall_results)
-        value = [
-            {course_id: course_time}
-        ]
-        if key not in course_times_dic.keys():
-             course_times_dic[key] = value
-        else:
-            if course_id not in course_times_dic[key]:
-                course_times_dic[key].append({course_id: course_time})
-
-    return render_template('routes/visiter/overallResults.html', rank_list = course_times_dic)
+    return render_template(
+        'routes/visiter/overallResults.html', 
+        rank_list = sorted_data
+    )
 
 # Route: Top 5 graph
 @app.route('/graph')
 def graph():
-    original_data = getOverallResults()
+    original_data = getOverallResult()[:5]
     bestDriverList = []
     resultsList = []
-    unique_output = set()
-
+   
     for item in original_data:
-        if item[0] not in unique_output:
-            name = str(item[0]) + ' ' + item[1]
-            bestDriverList.append(name)
-            resultsList.append(item[-1])
-            unique_output.add(item[0])
-        if len(unique_output) == 5:
-            break
+        driver = str(item[0][0]) + ' ' + str(item[0][1])
+        result = item[1]['overall_results']
+        bestDriverList.append(driver)
+        resultsList.append(result)
+
     return render_template('routes/visiter/top5graph.html', name_list = bestDriverList, value_list = resultsList)
 
 # ==================== Admin ====================
@@ -345,11 +344,11 @@ def run_search():
     course_id =''
     connection = getCursor()
     driver_info = """
-        SELECT d.driver_id, concat(d.first_name, ' ', d.surname) as name
+        SELECT d.driver_id, concat(d.first_name, ' ', d.surname) as driver_name
         FROM driver as d;
     """
     course_info = """
-        SELECT c.course_id, c.name
+        SELECT c.course_id, c.name as course_name
         FROM course as c;
     """
     connection.execute(driver_info)
@@ -366,9 +365,15 @@ def run_search():
 
     if len(driver_id) > 0:
         driver_run_query = """
-            SELECT  d.driver_id, concat(d.first_name, ' ', d.surname) as name, r.crs_id, r.run_num, r.seconds, r.cones, r.wd
+            SELECT  
+                d.driver_id, 
+                CONCAT(d.first_name, ' ', d.surname) AS driver_name, 
+                r1.crs_id,
+                c.name AS course_name,
+                r1.run_num, r1.seconds, r1.cones, r1.wd
             FROM driver as d
-                JOIN run as r on r.dr_id = d.driver_id
+                JOIN run AS r1 ON r1.dr_id = d.driver_id
+                JOIN course AS c ON r1.crs_id = c.course_id
             WHERE d.driver_id = %s;
         """
 
@@ -378,9 +383,15 @@ def run_search():
   
     if len(course_id) > 0:
         course_run_query = """ 
-            SELECT r.dr_id, c.name, c.course_id, r.run_num, r.seconds, r.cones, r.wd
+            SELECT  
+                d.driver_id, 
+                CONCAT(d.first_name, ' ', d.surname) AS driver_name, 
+                r.crs_id,
+                c.name AS course_name,
+                r.run_num, r.seconds, r.cones, r.wd
             FROM course as c
                 JOIN run as r on r.crs_id = c.course_id
+                JOIN driver as d on d.driver_id = r.dr_id
             WHERE c.course_id = %s;
         """
         connection.execute(course_run_query, (course_id,))
@@ -401,9 +412,11 @@ def edit_run():
     is_redirect = False
     if request.method == 'POST':
         driver_id = request.form['driver_id']
+        driver_name = request.form['driver_name']
         course_id = request.form['course_id']
+        course_name = request.form['course_name']
         run_num = request.form['run_num']
-        name = request.form['name']
+        # name = request.form['name']
 
         if 'seconds' in request.form:
             seconds = request.form['seconds']
@@ -422,18 +435,40 @@ def edit_run():
         """
         connection.execute(query, (seconds, cones, wd, driver_id, course_id, run_num))
         is_redirect = True
-        return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
+        return render_template(
+            'routes/admin/editRun.html', 
+            driver_id = driver_id,
+            driver_name = driver_name,
+            course_id = course_id,
+            course_name = course_name,
+            run_num = run_num,
+            seconds = seconds,
+            cones = cones,
+            wd = wd,
+            is_redirect=is_redirect)
     else:
         is_redirect = False
         driver_id = request.args.get('driver_id')
-        name = request.args.get('name')
+        driver_name = request.args.get('driver_name')
         course_id = request.args.get('course_id')
+        course_name = request.args.get('course_name')
         run_num = request.args.get('run_num')
         seconds = request.args.get('seconds')
         cones = request.args.get('cones')
         wd = request.args.get('wd')
         
-        return render_template('routes/admin/editRun.html', driver_id = driver_id, name = name, course_id = course_id, run_num = run_num, seconds = seconds, cones = cones, wd = wd, is_redirect=is_redirect)
+        return render_template(
+            'routes/admin/editRun.html', 
+            driver_id = driver_id, 
+            driver_name = driver_name, 
+            course_id = course_id, 
+            course_name = course_name,
+            run_num = run_num, 
+            seconds = seconds, 
+            cones = cones, 
+            wd = wd, 
+            is_redirect=is_redirect
+        )
     
 @app.route('/add_driver', methods=['GET', 'POST'])
 def add_driver():

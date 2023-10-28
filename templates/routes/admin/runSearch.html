@@ -18,7 +18,7 @@
       name='selected_driver'
       aria-label="Select Runs from driver list by name"
       onchange='this.form.submit()'>
-      <option selected>Open this select course</option>
+      <option selected>Open this select driver</option>
       {% for driver in driver_run_info %}
         <option value="{{ driver[0] }}">
           {{ driver[1] }} {{ driver[2] }}
@@ -40,7 +40,7 @@
       name='selected_course'
       aria-label="Select Runs from driver list by name"
       onchange='this.form.submit()'>
-      <option selected>Open this select driver</option>
+      <option selected>Open this select course</option>
       {% for course in course_details %}
         <option value="{{ course[0] }}">
           {{ course[1] }}
@@ -52,9 +52,10 @@
   <table class="table table-hover table-bordered m-3 {% if show_results %}visible{% else %}invisible{% endif %}">
     <thead>
       <tr>
-        <th class='text-success-emphasis'>Driver_id</th>
-        <th class='text-success-emphasis'>Name</th>
+        <th class='text-success-emphasis'>Driver ID</th>
+        <th class='text-success-emphasis'>Driver Name</th>
         <th class='text-success-emphasis'>Course Id</th>
+        <th class='text-success-emphasis'>Course Name</th>
         <th class='text-success-emphasis'>Run Num</th>
         <th class='text-success-emphasis'>Seconds</th>
         <th class='text-success-emphasis'>Cones</th>
@@ -68,31 +69,33 @@
           <td class='text-success-emphasis'>{{ run[1] }}</td>
           <td class='text-success-emphasis'>{{ run[2] }}</td>
           <td class='text-success-emphasis'>{{ run[3] }}</td>
-          <td class='text-success-emphasis'>
-            {% if run[4] is not none %}
-              {{ run[4] }}
-            {% endif %}
-          </td>
+          <td class='text-success-emphasis'>{{ run[4] }}</td>
           <td class='text-success-emphasis'>
             {% if run[5] is not none %}
               {{ run[5] }}
             {% endif %}
           </td>
+          <td class='text-success-emphasis'>
+            {% if run[6] is not none %}
+              {{ run[6] }}
+            {% endif %}
+          </td>
 
           <td class='text-success-emphasis'>
-            {% if run[6] != 0 %}
+            {% if run[7] != 0 %}
               WD
             {% endif %}
           </td>
           <td class='text-success-emphasis'>
             <a href="{{ url_for('edit_run',**{
                 'driver_id': run[0],
-                'name': run[1],
+                'driver_name': run[1],
                 'course_id': run[2],
-                'run_num': run[3],
-                'seconds': run[4],
-                'cones': run[5],
-                'wd': run[6]
+                'course_name': run[3],
+                'run_num': run[4],
+                'seconds': run[5],
+                'cones': run[6],
+                'wd': run[7]
             })}}">Edit Run</a>
           </td>
         </tr>
