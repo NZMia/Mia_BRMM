@@ -2,12 +2,9 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
-from flask import url_for
-import re
 from datetime import datetime
 
 import mysql.connector
-from mysql.connector import FieldType
 import connect
 
 app = Flask(__name__)
@@ -76,7 +73,7 @@ def getOverallResult():
 				ELSE FORMAT(run_total, 2)
 			END AS course_time
 		FROM RankedData AS t1
-		WHERE row_num = 1
+		WHERE row_num = 1;
     """
     connection.execute(query)
     original_data = connection.fetchall()
@@ -117,17 +114,27 @@ def getOverallResult():
 
     return sorted_calculated_overall_result
 
-def getDrivers():
+def getDrivers(order_by_name=True):
     connection = getCursor()
-    query = """
-        SELECT * 
-        FROM driver, car 
-        WHERE driver.car = car.car_num
-        ORDER BY driver.surname, driver.first_name;
-    """
+    
+    if order_by_name:
+        query = """
+            SELECT * 
+            FROM driver, car 
+            WHERE driver.car = car.car_num
+            ORDER BY driver.surname, driver.first_name;
+        """
+    else:
+        query = """
+            SELECT * 
+            FROM driver, car 
+            WHERE driver.car = car.car_num;
+        """
+    
     connection.execute(query)
     driverList = connection.fetchall()
     return driverList
+
 
 def calculate_age(date_of_birth):
     input_date = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
@@ -216,13 +223,15 @@ def courses():
 @app.route('/drivers', methods=['GET'])
 def drivers():
     is_run_details = request.args.get('is_run_details')
-    driver_list = getDrivers()
+   
     if is_run_details:
+        driver_list = getDrivers(order_by_name=False)
         return render_template(
             'routes/visiter/driversDropdown.html',
             driver_list = driver_list,
         )
     else:
+        driver_list = getDrivers()
         return render_template(
             'routes/visiter/driverList.html',
             driver_list = driver_list
