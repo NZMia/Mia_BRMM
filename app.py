@@ -123,7 +123,7 @@ def getDrivers():
         SELECT * 
         FROM driver, car 
         WHERE driver.car = car.car_num
-        ORDER BY driver.age desc;
+        ORDER BY driver.surname, driver.first_name;
     """
     connection.execute(query)
     driverList = connection.fetchall()

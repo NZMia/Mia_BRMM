@@ -12,7 +12,7 @@
           <th colspan="2" class='text-center text-success-emphasis'>Car Info</th>
         </tr>
         <tr>
-          <th class='text-success-emphasis'>Name (Surname First_name)</th>
+          <th class='text-success-emphasis'>Name</th>
           <th class='text-success-emphasis'>Date of Birth</th>
           <th class='text-success-emphasis'>Age</th>
           <th class='text-success-emphasis'>Caregiver</th>
@@ -26,7 +26,7 @@
             
             <td class='text-success-emphasis'>
               <a href="{{ url_for('driver', driver_id=driver[0]) }}">
-                {{ driver[2] }}  {{ driver[1] }}
+                {{ driver[1] }} {{ driver[2] }} 
               </a>
             </td>
             <td class='text-success-emphasis'>
