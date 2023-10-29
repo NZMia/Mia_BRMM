@@ -10,8 +10,6 @@ This web application is built for the BRMM Car Club to manage and display result
 
 ## Structure  
 
----
-
 - static
 - templates
   - component (reusable components)
@@ -38,9 +36,8 @@ This web application is built for the BRMM Car Club to manage and display result
   - home.html (Home page for visitors/drivers)
 - app.py (Main Flask application file)  
 
-## Routes
+## Routes  
 
----
 
 | Route | HTTP Method | Description | Template | Parameters |
 |-------|-------------|-------------|------------|------------|
@@ -59,16 +56,40 @@ This web application is built for the BRMM Car Club to manage and display result
 | `/run_search` | GET | Enables administrators to search for runs by driver or course. |routes/admin/runSearch.html | None |
 | `/run_search` | POST | Enables administrators to search for runs by driver or course. | routes/admin/runSearch.html |- POST: `selected_driver` (form user select) - Selects a driver for run search. |
 | `/run_search` | POST | Enables administrators to search for runs by driver or course. | routes/admin/runSearch.html | - POST: `selected_course` (form user select) - Selects a course for run search. |
-| `/edit_run` | GET | Allows administrators to edit run details for a specific driver and course. | routes/admin/editRun.html | - GET: `driver_id`, `name`, `course_id`, `run_num`, `seconds`, `cones`, `wd` (query parameters) - Details of the run to edit. | 
+| `/edit_run` | GET | Allows administrators to edit run details for a specific driver and course. | routes/admin/editRun.html | - GET: `driver_id`, `driver_name`, `course_id`, `course_name`, `run_num`, `seconds`, `cones`, `wd` (query parameters) - Details of the run to edit. | 
 | `/edit_run` | POST | Allows administrators to edit run details for a specific driver and course. | routes/admin/editRun.html | - POST: Form fields for editing run details (`seconds`, `cones`, `wd`). |
 | `/add_driver` | GET  | Provides a form for adding new drivers with various validation checks. | routes/admin/addDriver.html | None |
 | `/add_driver` | POST | Provides a form for adding new drivers with various validation checks. | routes/admin/addDriver.html | - POST: Form fields for adding a new driver (e.g., `first_name`, `surname`, `car`, `date_of_birth`, `caregiver`). |  
 
+| Starting Page      | Route                | Target Page/View       | Target View Function           |
+|-------------------|----------------------|------------------------|-------------------------------|
+| Home Page         | `/` (GET)            | `home.html`            | Display the home page content  |
+| Home Page Navigation | `/courses` (GET) | `courses()`           | List all courses                |
+| Home Page Navigation | `/drivers` (GET) | `drivers()`           | List all drivers                |
+| Home Page Navigation | `/driver` (GET, POST) | `driver()`        | Display driver details  |
+| Home Page Navigation | `/overall_results` (GET) | `overall_results()` | Display overall competition results |
+| Home Page Navigation | `/graph` (GET) | `graph()`                | Show a bar chart of the top five drivers |
+| Home Page Navigation | `/admin` (GET) | `admin.html`            | Access the admin page           |
+| Admin Page Navigation | `/junior_list` (GET) | `junior_list()`      | List junior drivers             |
+| Admin Page Navigation | `/driver_search` (GET, POST) | `driver_search()` | Search for drivers              |
+| Admin Page Navigation | `/run_search` (GET, POST) | `run_search()`      | Search for competition runs      |
+| Admin Page Navigation | `/edit_run` (GET, POST) | `edit_run()`         | Edit a competition run           |
+| Admin Page Navigation | `/add_driver` (GET, POST) | `add_driver()`     | Add a new driver                 |
+
+
 ## Assumptions and Design Decisions
 
----
+### Assumptions  
+**How to deal with overall scroes that are equal**  
 
-#### Choice of Technology Stack  
+The entire project outlines the competition and scoring rules, where the best scores are counted towards the overall results. However, it does not provide guidance on how to handle situations when two or more drivers have the same best scores.
+
+If the overall scores of two or more drivers are equal, their performance on each course will be compared.
+The driver with the lowest cumulative best run times for all courses will be considered the winner.
+If the tie remains unbroken, the application will display a message indicating the tie, and it will be stated that based on the provided data, a clear winner cannot be determined.
+
+### Design Decisions  
+#### Choice of Technology Stack   
 
 - **Flask and Python**：
     - We have opted for Flask and Python as the primary development framework and programming language for this project. This decision is based on several factors, including their lightweight nature, ease of learning, and extensive community support. Flask provides us with flexibility, allowing us to focus on solving business problems without being constrained by overly complex framework structures.
@@ -105,18 +126,15 @@ This web application is built for the BRMM Car Club to manage and display result
 
 ## Usage
 
----
-
 To run the application:
 
 1. Clone this repository.
 2. Install the necessary dependencies with `pip install -r requirements.txt`.
 3. Set up the MySQL database and update the database configuration in `connect.py`.
-4. Run `python app.py` to start the Flask application.
+4. Run `flask run` to start the Flask application.
 
 ## Database 
 
----
 
   - **What SQL statement creates the car table and defines its three fields/columns?**
     ```sql
@@ -155,13 +173,11 @@ To run the application:
 
 ## Contributors  
 
----
 
 - [Mia](https://github.com/NZMia) - Project Developer
 
 ## License  
 
----
 
 This project is licensed under the [MIT License](LICENSE).
 
